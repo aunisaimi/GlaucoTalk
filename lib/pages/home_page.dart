@@ -16,7 +16,6 @@ class HomePage extends StatefulWidget {
 
   final user = FirebaseAuth.instance.currentUser!;
 
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -53,8 +52,7 @@ class _HomePageState extends State<HomePage> {
 
   get floatingActionButton => null;
 
-//Function to navigate to TakePictureScreen
-
+  //Function to navigate to TakePictureScreen
   void navigateToTakePictureScreen(
       BuildContext context, CameraDescription camera){
 
@@ -115,11 +113,17 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           nameController.text = userDoc['name'];
           usernameController.text = userDoc['username'];
+          emailController.text = userDoc['email'];
 
           // set the profile pictrue URL from firestore
           profilePictureUrl = userDoc['profilePictureUrl'];
           // set other fields similarity
         });
+
+        print("This is the profile picture url : ${profilePictureUrl}");
+      }
+      else{
+        print("Data not exist");
       }
     } catch(e){
       print(e);
@@ -215,7 +219,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     // Display user's name
                     Text(
-                      'Logged in as: ${widget.user.displayName ?? nameController.text}',
+                      'Logged in as: ${nameController.text}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -223,7 +227,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     // Display user's email
                     Text(
-                      'Email: ${widget.user.email }',
+                      'Email: ${emailController.text}',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ],
@@ -242,8 +246,24 @@ class _HomePageState extends State<HomePage> {
             Center(
               child: const Text('Calls Tab Content'),
             ),
+
           ],
         ),
+        // drawer: Drawer(
+        //   backgroundColor: const Color(0xFF00008B),
+        //   child: FutureBuilder(
+        //     future: fetchUserData(),
+        //     builder: (context, snapshot) {
+        //       if (snapshot.connectionState == ConnectionState.waiting) {
+        //         return CircularProgressIndicator();
+        //       } else if (snapshot.hasError) {
+        //         return Text('Error: ${snapshot.error}');
+        //       } else {
+        //         return buildDrawer();
+        //       }
+        //     },
+        //   ),
+        // ),
 
         /*
           body: TabBarView(
@@ -297,14 +317,21 @@ class _HomePageState extends State<HomePage> {
         drawer: Drawer(
           backgroundColor: const Color(0xFF00008B),
           child: ListView(
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.all(16.0),
             children: [
               DrawerHeader(
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage('lib/images/winter.jpg'),
+                    Expanded(
+                      child: CircleAvatar(
+                        radius: 64,
+                        backgroundImage: profilePictureUrl != null &&
+                            profilePictureUrl.isNotEmpty ?
+                            NetworkImage(profilePictureUrl!) :
+                            const AssetImage('lib/images/winter.jpg') as
+                              ImageProvider<Object>,
+                        backgroundColor: Colors.grey,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -331,14 +358,20 @@ class _HomePageState extends State<HomePage> {
                           Align(
                             alignment: Alignment.centerLeft, // Adjust alignment as needed
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // Navigate to the edit profile page
-                                Navigator.push(
+                                bool result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const ProfilePage(),
                                   ),
                                 );
+
+                                print("this is the save changes $result");
+                                if(result){
+                                  fetchUserData();
+                                }
+
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.deepOrange,

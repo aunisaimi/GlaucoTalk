@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Uint8List? _image;
   final imagePicker = ImagePicker();
   String dropdownvalue = "Male"; // replace to stored user's gender
-
+  bool obscureText = true;
 
   TextEditingController nameController = TextEditingController();
   TextEditingController usernameController = TextEditingController();
@@ -156,6 +156,9 @@ class _ProfilePageState extends State<ProfilePage> {
         _image = Uint8List.fromList(imageBytes);
       });
     }
+    else{
+      print("Image source not found");
+    }
   }
 
   @override
@@ -183,13 +186,16 @@ class _ProfilePageState extends State<ProfilePage> {
           nameController.text = userDoc['name'];
           passwordController.text = userDoc['password'];
           dropdownvalue = userDoc['gender'];
-          dateController = userDoc['birthday'] ?? ' ';
-          usernameController.text = userDoc['username'] ?? ' ';
+          dateController.text = userDoc['birthday'] ?? ' ';
+          usernameController.text = userDoc['username'] ?? '';
 
           // set the profile pictrue URL from firestore
           profilePictureUrl = userDoc['profilePictureUrl'];
           // set other fields similarity
         });
+
+        print("this is user name : ${userDoc['username']}");
+        print("This is profile picture : ${profilePictureUrl}");
       }
     } catch(e){
       print(e);
@@ -222,18 +228,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
       // update the user document in firestore
       await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .update({
-            'name': nameController.text,
-            'gender' : dropdownvalue,
-            'email' : emailController.text,
-            'birthday' : dateController.text,
-            'username' : usernameController.text,
-            'profilePictureUrl' : profilePictureUrl,
-        // update other fields as needed
-      },
-    );
+        .collection('users')
+        .doc(userId)
+        .update({
+          'name': nameController.text,
+          'gender' : dropdownvalue,
+          'email' : emailController.text,
+          'birthday' : dateController.text,
+          'username' : usernameController.text,
+          'profilePictureUrl' : profilePictureUrl,
+
+        });
 
       // inform the user that the profile has been updated
       ScaffoldMessenger.of(context).showSnackBar(
@@ -241,7 +246,6 @@ class _ProfilePageState extends State<ProfilePage> {
           content: Text('Profile update successfully'),
         ),
       );
-
     } catch(e){
       print(e);
     }
@@ -249,42 +253,42 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        // backgroundColor: Color(0xFF00008B),
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text("Edit Profile"),
-          backgroundColor: Colors.black38,
-        ),
-        body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text("Edit Profile"),
+        backgroundColor: Colors.black38,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: SingleChildScrollView(
           child: Column(
-            children: <Widget>[
-                 _image != null ?
-                     CircleAvatar(
-                       radius: 64,
-                         backgroundImage: MemoryImage(_image!),
-                     ) :
-                 Positioned(
-                     bottom: -10,
-                     left: 80,
-                     child: IconButton(
-                       onPressed: (){
-                         pickImage(ImageSource.gallery);
-                       },
-                       icon: const Icon(Icons.add_a_photo),
-                     ),
-                 ),
-
-
-               const SizedBox(height: 12),
-              // MyTextField(
-              //     controller: nameController,
-              //     hintText: "Name",
-              //     obscureText: false
-              // ),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                alignment: Alignment.bottomLeft,
+                children: [
+                  profilePictureUrl != null ? CircleAvatar(
+                    radius: 64,
+                    backgroundImage: profilePictureUrl != null &&
+                      profilePictureUrl.isNotEmpty ?
+                      NetworkImage(profilePictureUrl!) :
+                      const AssetImage('lib/images/winter.jpg') as
+                      ImageProvider<Object>,
+                  )
+                      : Container(),
+                  Positioned(
+                    bottom: -10,
+                    left: 80,
+                    child: IconButton(
+                      onPressed: () {
+                        pickImage(ImageSource.gallery);
+                      },
+                      icon: const Icon(Icons.add_a_photo),
+                    ),
+                  ),
+                ],
+              ),
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -293,14 +297,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   fillColor: Color(0xF6F5F5FF),
                 ),
               ),
-              const SizedBox(height: 12),
               DropdownButton(
                 value: dropdownvalue,
-                // dropdownColor: const Color(0xF6F5F5FF),
                 isExpanded: true,
                 icon: const Icon(Icons.arrow_drop_down_circle_sharp),
-                items: <String>['Male', 'Female'].
-                map<DropdownMenuItem<String>>((String value) {
+                items: <String>['Male', 'Female']
+                    .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(
@@ -308,14 +310,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   );
                 }).toList(),
-                onChanged: (String? newValue){
+                onChanged: (String? newValue) {
                   setState(() {
                     dropdownvalue = newValue!;
                   });
                 },
               ),
-
-              const SizedBox(height: 12),
               TextField(
                 controller: usernameController,
                 decoration: const InputDecoration(
@@ -324,8 +324,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   fillColor: Color(0xF6F5F5FF),
                 ),
               ),
-
-             const SizedBox(height: 12),
               TextField(
                 controller: emailController,
                 decoration: const InputDecoration(
@@ -334,19 +332,25 @@ class _ProfilePageState extends State<ProfilePage> {
                   fillColor: Color(0xF6F5F5FF),
                 ),
               ),
-
-              const SizedBox(height: 12),
               TextField(
                 controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: "Password",
+                obscureText: obscureText,
+                decoration: InputDecoration(
                   filled: true,
                   fillColor: Color(0xF6F5F5FF),
-                  suffixIcon: Icon(Icons.password_outlined),
+                  labelText: 'Password',
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      obscureText ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        obscureText = !obscureText;
+                      });
+                    },
+                  ),
                 ),
-                obscureText: true,
               ),
-              const SizedBox(height: 12),
               TextField(
                 controller: dateController,
                 decoration: const InputDecoration(
@@ -356,41 +360,173 @@ class _ProfilePageState extends State<ProfilePage> {
                   suffixIcon: Icon(Icons.calendar_month_outlined),
                 ),
                 keyboardType: TextInputType.datetime,
-                onTap: (){
+                onTap: () {
                   _selectDate();
                 },
               ),
-
-              const SizedBox(height: 8,),
-
-              SizedBox(
-                width: 200,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrangeAccent,
-                      elevation: 10,
-                      shape: const StadiumBorder()
-                  ),
-                  child: const Text(
-                    "Save Changes",
-                    style: TextStyle(
-                        color: Color(0xF6F5F5FF),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  onPressed: (){
-                   // updateUserData();
-                    uploadImageAndSave();
-                    Navigator.pop(context);
-                  },
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrangeAccent,
+                    elevation: 10,
+                    shape: const StadiumBorder()),
+                child: const Text(
+                  "Save Changes",
+                  style: TextStyle(
+                      color: Color(0xF6F5F5FF),
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
+                onPressed: () {
+                  if(usernameController.text.isNotEmpty &&
+                      nameController.text.isNotEmpty &&
+                      passwordController.text.isNotEmpty &&
+                      emailController.text.isNotEmpty){
+                    updateUserData();
+                    uploadImageAndSave();
+                    Navigator.pop(context, true);
+                  }
+                  else{
+                    Navigator.pop(context, false);
+                  }
+                },
               ),
-
             ],
           ),
         ),
       ),
-      ),
     );
   }
+
+
+// @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     // backgroundColor: Color(0xFF00008B),
+  //     backgroundColor: Colors.white,
+  //     appBar: AppBar(
+  //       title: const Text("Edit Profile"),
+  //       backgroundColor: Colors.black38,
+  //     ),
+  //     body: Padding(
+  //       padding: const EdgeInsets.all(20.0),
+  //       child: SingleChildScrollView(
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             _image != null ? CircleAvatar(
+  //               radius: 64,
+  //               backgroundImage: MemoryImage(_image!),
+  //             ) : Container(),
+  //             Positioned(
+  //               bottom: -10,
+  //               left: 80,
+  //               child: IconButton(
+  //                 onPressed: (){
+  //                   pickImage(ImageSource.gallery);
+  //                 },
+  //                 icon: const Icon(Icons.add_a_photo),
+  //               ),
+  //             ),
+  //             TextField(
+  //               controller: nameController,
+  //               decoration: const InputDecoration(
+  //                 labelText: "Name",
+  //                 filled: true,
+  //                 fillColor: Color(0xF6F5F5FF),
+  //               ),
+  //             ),
+  //             DropdownButton(
+  //               value: dropdownvalue,
+  //               // dropdownColor: const Color(0xF6F5F5FF),
+  //               isExpanded: true,
+  //               icon: const Icon(Icons.arrow_drop_down_circle_sharp),
+  //               items: <String>['Male', 'Female'].
+  //               map<DropdownMenuItem<String>>((String value) {
+  //                 return DropdownMenuItem<String>(
+  //                   value: value,
+  //                   child: Text(
+  //                     value,
+  //                   ),
+  //                 );
+  //               }).toList(),
+  //               onChanged: (String? newValue){
+  //                 setState(() {
+  //                   dropdownvalue = newValue!;
+  //                 });
+  //               },
+  //             ),
+  //             TextField(
+  //               controller: usernameController,
+  //               decoration: const InputDecoration(
+  //                 labelText: "username",
+  //                 filled: true,
+  //                 fillColor: Color(0xF6F5F5FF),
+  //               ),
+  //             ),
+  //             TextField(
+  //               controller: emailController,
+  //               decoration: const InputDecoration(
+  //                 labelText: "email",
+  //                 filled: true,
+  //                 fillColor: Color(0xF6F5F5FF),
+  //               ),
+  //             ),
+  //             TextField(
+  //               controller: passwordController,
+  //               obscureText: obscureText,
+  //               decoration: InputDecoration(
+  //                 filled: true,
+  //                 fillColor: Color(0xF6F5F5FF),
+  //                 labelText: 'Password',
+  //                 suffixIcon: IconButton(
+  //                   icon: Icon(
+  //                     obscureText ? Icons.visibility : Icons.visibility_off,
+  //                   ),
+  //                   onPressed: () {
+  //                     // Toggle password visibility
+  //                     setState(() {
+  //                       obscureText = !obscureText;
+  //                     });
+  //                   },
+  //                 ),
+  //               ),
+  //             ),
+  //             TextField(
+  //               controller: dateController,
+  //               decoration: const InputDecoration(
+  //                 labelText: "Date of Birth",
+  //                 filled: true,
+  //                 fillColor: Color(0xF6F5F5FF),
+  //                 suffixIcon: Icon(Icons.calendar_month_outlined),
+  //               ),
+  //               keyboardType: TextInputType.datetime,
+  //               onTap: (){
+  //                 _selectDate();
+  //               },
+  //             ),
+  //             ElevatedButton(
+  //               style: ElevatedButton.styleFrom(
+  //                   backgroundColor: Colors.deepOrangeAccent,
+  //                   elevation: 10,
+  //                   shape: const StadiumBorder()
+  //               ),
+  //               child: const Text(
+  //                 "Save Changes",
+  //                 style: TextStyle(
+  //                     color: Color(0xF6F5F5FF),
+  //                     fontSize: 16,
+  //                     fontWeight: FontWeight.bold),
+  //               ),
+  //               onPressed: (){
+  //                 updateUserData();
+  //                 uploadImageAndSave();
+  //                 Navigator.pop(context);
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }
