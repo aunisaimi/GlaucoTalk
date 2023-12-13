@@ -1,6 +1,7 @@
 import 'package:apptalk/camera/camera.dart';
 import 'package:apptalk/firebase/auth_service.dart';
 import 'package:apptalk/pages/chat_page.dart';
+import 'package:apptalk/pages/help_center.dart';
 import 'package:apptalk/pages/login.dart';
 import 'package:apptalk/pages/search.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:apptalk/pages/profile_page.dart';
+
+import 'account_center.dart';
 //import 'package:provider/provider.dart';
 
 
@@ -416,6 +419,11 @@ class _HomePageState extends State<HomePage> {
                   _onItemTapped(0);
                   // then close the drawer
                   Navigator.pop(context);
+                  Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (context) => SettingPageUI()
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: 8,),
@@ -496,6 +504,11 @@ class _HomePageState extends State<HomePage> {
                   _onItemTapped(4);
                   // Then close the drawer
                   Navigator.pop(context);
+                  Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (context) => HelpCenter()
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: 8,),
