@@ -12,25 +12,26 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Help"),
+        backgroundColor: const Color(0xFF00008B),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            Divider(
-              color: Colors.white24, // Set the color of the divider
-              thickness: 2.0, // Set the thickness of the divider
-              height: 20.0, // Set the height of the divider
-              indent: 20.0, // Set the left indentation of the divider
-              endIndent: 20.0, // Set the right indentation of the divider
+            Text(
+              "Contact Us",
+              style: TextStyle(
+                fontSize: 30
+              ),
             ),
-            Text("Contact Us"),
+            SizedBox(height: 8,),
             TextField(
               decoration: InputDecoration(
                 hintText: "Tell us how we can help in at least 5 characters",
                 border: OutlineInputBorder(),
               ),
             ),
+            SizedBox(height: 8,),
             ElevatedButton(
                 onPressed: (){
                   // add save input to database function

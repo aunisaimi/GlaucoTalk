@@ -257,7 +257,7 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Edit Profile"),
-        backgroundColor: Colors.black38,
+        backgroundColor: const Color(0xFF00008B),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),

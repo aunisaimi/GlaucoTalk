@@ -15,12 +15,18 @@ class _FeedbackScreenState extends State<FeedbackPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Feedback"),
+        backgroundColor: const Color(0xFF00008B),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            Text("Rate Your Experience"),
+            Text(
+              "Rate Your Experience",
+              style: TextStyle(
+                fontSize: 30
+              ),
+            ),
             Text(
               "Are you Satisfied with the Application?",
               style: TextStyle(
@@ -35,7 +41,12 @@ class _FeedbackScreenState extends State<FeedbackPage> {
               indent: 20.0, // Set the left indentation of the divider
               endIndent: 20.0, // Set the right indentation of the divider
             ),
-            Text("Tell us what can be Improved?"),
+            Text(
+              "Tell us what can be Improved?",
+              style: TextStyle(
+                fontSize: 16,
+              ),
+            ),
             TextField(
               decoration: InputDecoration(
                 hintText: "feedback",

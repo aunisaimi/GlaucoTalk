@@ -11,24 +11,31 @@ class HelpCenter extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Help"),
+        backgroundColor: const Color(0xFF00008B),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(25.0),
         child: ListView(
           children: <Widget>[
-            Card(
-              child: ListTile(
-                leading: Icon(Icons.chat_outlined),
-                title: Text('Help Center'),
+            Text(
+              "Help Center",
+              style: TextStyle(
+                fontSize: 30,
               ),
             ),
-            Divider(
-              color: Colors.white24, // Set the color of the divider
-              thickness: 2.0, // Set the thickness of the divider
-              height: 20.0, // Set the height of the divider
-              indent: 20.0, // Set the left indentation of the divider
-              endIndent: 20.0, // Set the right indentation of the divider
-            ),
+            // Card(
+            //   child: ListTile(
+            //     leading: Icon(Icons.chat_outlined),
+            //     title: Text('Help Center'),
+            //   ),
+            // ),
+            // Divider(
+            //   color: Colors.white24, // Set the color of the divider
+            //   thickness: 2.0, // Set the thickness of the divider
+            //   height: 20.0, // Set the height of the divider
+            //   indent: 20.0, // Set the left indentation of the divider
+            //   endIndent: 20.0, // Set the right indentation of the divider
+            // ),
             GestureDetector(
               onTap: () {
                 // Navigate to Contact Us Screen
