@@ -3,19 +3,19 @@ import 'package:apptalk/firebase/auth_service.dart';
 import 'package:apptalk/pages/chat_page.dart';
 import 'package:apptalk/pages/login.dart';
 import 'package:apptalk/pages/search.dart';
+import 'package:apptalk/pages/setting/account_center.dart';
+import 'package:apptalk/pages/setting/help_center.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:apptalk/pages/profile_page.dart';
-//import 'package:provider/provider.dart';
 
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
   final user = FirebaseAuth.instance.currentUser!;
-
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -53,8 +53,7 @@ class _HomePageState extends State<HomePage> {
 
   get floatingActionButton => null;
 
-//Function to navigate to TakePictureScreen
-
+  //Function to navigate to TakePictureScreen
   void navigateToTakePictureScreen(
       BuildContext context, CameraDescription camera){
 
@@ -115,11 +114,17 @@ class _HomePageState extends State<HomePage> {
         setState(() {
           nameController.text = userDoc['name'];
           usernameController.text = userDoc['username'];
+          emailController.text = userDoc['email'];
 
           // set the profile pictrue URL from firestore
           profilePictureUrl = userDoc['profilePictureUrl'];
           // set other fields similarity
         });
+
+        print("This is the profile picture url : ${profilePictureUrl}");
+      }
+      else{
+        print("Data not exist");
       }
     } catch(e){
       print(e);
@@ -215,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                   children: [
                     // Display user's name
                     Text(
-                      'Logged in as: ${widget.user.displayName ?? nameController.text}',
+                      'Logged in as: ${nameController.text}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
@@ -223,7 +228,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     // Display user's email
                     Text(
-                      'Email: ${widget.user.email }',
+                      'Email: ${emailController.text}',
                       style: const TextStyle(fontSize: 16),
                     ),
                   ],
@@ -242,69 +247,29 @@ class _HomePageState extends State<HomePage> {
             Center(
               child: const Text('Calls Tab Content'),
             ),
+
           ],
         ),
 
-        /*
-          body: TabBarView(
-            children: [
-              _buildUserList(),
-              Column(
-                children: [
-                  // Display user's name and email
-                  Column(
-                    children: [
-                      // Display user's name
-                      Text(
-                        'Logged in as: ${widget.user.displayName ?? 'No Name'}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      // Display user's email
-                      Text(
-                        'Email: ${widget.user.email}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: Container(
-                      // Your custom text for the 'Status' tab goes here
-                      child: const Text(
-                        'Custom Text for Status Tab',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              // Content for status tab
-              const Center(
-                child: Text('Status Tab Content'),
-              ),
-              // Content for calls tab
-              // ignore: prefer_const_constructors
-              Center(
-                child: const Text('Calls Tab Content'),
-              ),
-            ],
-          ), */
-
         //Add a Drawer for sidebar navigation
-
         drawer: Drawer(
           backgroundColor: const Color(0xFF00008B),
           child: ListView(
-            padding: EdgeInsets.zero,
+            padding: const EdgeInsets.all(16.0),
             children: [
               DrawerHeader(
                 child: Row(
                   children: [
-                    const CircleAvatar(
-                      radius: 25,
-                      backgroundImage: AssetImage('lib/images/winter.jpg'),
+                    Expanded(
+                      child: CircleAvatar(
+                        radius: 64,
+                        backgroundImage: profilePictureUrl != null &&
+                            profilePictureUrl.isNotEmpty ?
+                        NetworkImage(profilePictureUrl!) :
+                        const AssetImage('lib/images/winter.jpg') as
+                        ImageProvider<Object>,
+                        backgroundColor: Colors.grey,
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -321,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           const SizedBox(height: 8,),
                           Text(
-                             '@' + usernameController.text, // Display the user's username
+                            '@' + usernameController.text, // Display the user's username
                             style: const TextStyle(
                               fontSize: 20,
                               color: Color(0xF6F5F5FF),
@@ -331,14 +296,20 @@ class _HomePageState extends State<HomePage> {
                           Align(
                             alignment: Alignment.centerLeft, // Adjust alignment as needed
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // Navigate to the edit profile page
-                                Navigator.push(
+                                bool result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => const ProfilePage(),
                                   ),
                                 );
+
+                                print("this is the save changes $result");
+                                if(result){
+                                  fetchUserData();
+                                }
+
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.deepOrange,
@@ -383,6 +354,11 @@ class _HomePageState extends State<HomePage> {
                   _onItemTapped(0);
                   // then close the drawer
                   Navigator.pop(context);
+                  Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingPageUI()
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: 8,),
@@ -463,6 +439,11 @@ class _HomePageState extends State<HomePage> {
                   _onItemTapped(4);
                   // Then close the drawer
                   Navigator.pop(context);
+                  Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (context) => const HelpCenter()
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: 8,),

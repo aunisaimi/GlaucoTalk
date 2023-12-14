@@ -42,7 +42,7 @@ class _MainMenuState extends State<MainMenu> {
                     textStyle: TextStyle(
                         color: myTextColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 30),
+                        fontSize: 24),
                   ),
                      textAlign: TextAlign.center,
                    ),

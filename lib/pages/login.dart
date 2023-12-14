@@ -1,15 +1,12 @@
-import 'package:apptalk/pages/forgot_password.dart';
+import 'package:apptalk/pages/password/forgot_password.dart';
 import 'package:apptalk/pages/home_page.dart';
 import 'package:apptalk/pages/main_menu.dart';
 import 'package:apptalk/pages/register.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:apptalk/components/square_tile.dart';
-import 'package:apptalk/firebase/auth_service.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 
 class LoginPage extends StatefulWidget {
@@ -29,9 +26,35 @@ class _LoginPageState extends State<LoginPage> {
   String password = "";
   String displayName = "";
 
+  bool isPasswordVisible = false;
+
   // text editing controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+
+  /*
+  Future<void> saveUser(User user, String email, String password) async{
+    // show loading circle
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+    try{
+      // Get a reference to the Firestore collection
+      CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
+      // Create a document with the user's UID as the document ID
+      await usersCollection.doc(user.uid).set({
+        'email': email,
+        'password': password,
+        // Add other user details as needed
+      });
+    } catch (e) {
+      print('Error saving user to Firestore: $e');
+   */
 
   // user login method
   void userLogin() async {
@@ -45,43 +68,48 @@ class _LoginPageState extends State<LoginPage> {
       },
     );
 
-   final authService = Provider.of<AuthService>(context, listen: false);
+    //final authService = Provider.of<AuthService>(context, listen: false);
 
     // try login
     try {
-      await authService.signInWithEmailandPassword(
-          emailController.text,
-          passwordController.text,
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
       );
+      // pop loading circle before user logged in
+      Navigator.pop(context);
 
       // Saving data to shared preferences after successful login
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('email', emailController.text);
 
+
       // Navigate to HomePage after successfully login
       Navigator.pushReplacement(
-          context,
-      MaterialPageRoute(
-          builder: (context) => HomePage()));
-      // pop loading circle before user logged in
-      //Navigator.pop(context);
-      //MaterialPageRoute(builder: (context) =>  HomePage(),);
-      // ),
-
-    }
-    catch(e){
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toString(),
-          ),
+        context,
+        MaterialPageRoute(
+          builder: (context) => HomePage(),
         ),
       );
     }
-    /*
-    on FirebaseAuthException {
-      showErrorMessage();
-    } */
+    catch (e) {
+      // Dismiss the loading dialog in case of an error
+      Navigator.pop(context);
+
+      if (e is FirebaseAuthException) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Firebase Auth Error: ${e.message}"),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("General Error: ${e.toString()}"),
+          ),
+        );
+      }
+    }
   }
 
   // show error message to user
@@ -111,8 +139,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,8 +150,8 @@ class _LoginPageState extends State<LoginPage> {
           onPressed: (){
             Navigator.of(
                 context).push(
-              MaterialPageRoute(
-                  builder: (context)=> const MainMenu())
+                MaterialPageRoute(
+                    builder: (context)=> const MainMenu())
             );
           },
         ),
@@ -134,257 +160,264 @@ class _LoginPageState extends State<LoginPage> {
       // safe area of the screen - guarantee visible to user
       body: SafeArea(
         //child: Center(
-          child: Form(
-            child: SingleChildScrollView(
-              child: Column(
-                // allign everything to the middle of the screen
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //const SizedBox(height: 50),
-                  // logo
-                  Image.asset("assets/logo.png",
-                    width: 200,
-                    height: 200,),
-                  //const SizedBox(height:2),
+        child: Form(
+          child: SingleChildScrollView(
+            child: Column(
+              // allign everything to the middle of the screen
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                //const SizedBox(height: 50),
+                // logo
+                Image.asset("assets/logo.png",
+                  width: 200,
+                  height: 200,),
+                //const SizedBox(height:2),
 
-                  // text under the lock icon
-                   Text(
-                    'L O G I N',
-                    style: GoogleFonts.passionOne(
-                      textStyle: const TextStyle(
-                        //color: Colors.white,
-                          color: Color(0xF6F5F5FF),
-                          fontSize: 40,
-                          fontWeight: FontWeight.bold),
+                // text under the lock icon
+                Text(
+                  'L O G I N',
+                  style: GoogleFonts.passionOne(
+                    textStyle: const TextStyle(
+                      //color: Colors.white,
+                        color: Color(0xF6F5F5FF),
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+
+                const SizedBox(height: 25),
+
+                // username textfield
+                Padding(
+                  padding:  const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: TextField(
+                    controller: emailController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      hintText: 'Email',
+                      prefixIcon: const Icon(Icons.email_outlined, color: Colors.white,),
+                      fillColor: Colors.deepPurple,
+                      filled: true,
+                      hintStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
-                    ),
+                    style: const TextStyle(color: Colors.white), // Text color while typing
+                  ),
+                ),
 
-                  const SizedBox(height: 25),
+                const SizedBox(height: 10),
 
-                  // username textfield
-                  Padding(
-                    padding:  const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        hintText: 'Email',
-                        prefixIcon: const Icon(Icons.email_outlined, color: Colors.white,),
-                        fillColor: Colors.deepPurple,
-                        filled: true,
-                        hintStyle: const TextStyle(
+                // password textfield
+                Padding(
+                  padding:  const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: TextField(
+                    controller: passwordController,
+                    obscureText: !isPasswordVisible,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      hintText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline_rounded,
+                        color: Colors.white,),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible ? Icons.visibility_off : Icons.visibility,
                           color: Colors.white,
                         ),
-                      ),
-                      style: const TextStyle(color: Colors.white), // Text color while typing
-                    ),
-                  ),
-                  /* MyTextField(
-                  controller: emailController,
-                  hintText: 'Email',
-                  obscureText: false,
-                ), */
-                  const SizedBox(height: 10),
-
-                  // password textfield
-                  Padding(
-                    padding:  const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: TextField(
-                      controller: passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        hintText: 'Password',
-                        prefixIcon: const Icon(Icons.lock_outline_rounded,
-                          color: Colors.white,),
-                        fillColor: Colors.deepPurple,
-                        filled: true,
-                        hintStyle: const TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      style: const TextStyle(color: Colors.white), // Text color while typing
-                    ),
-                  ),
-
-
-                  const SizedBox(height: 10),
-
-                  // forgot password
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: (){
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context){
-                                  return  ForgotPasswordPage();
-                                }));
-                          },
-                          child: const Text(
-                            'Forgot Password?',
-                            style: TextStyle(
-                              color: Color(0xF6F5F5FF),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // log in button
-                  SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.deepOrangeAccent,
-                          elevation: 10,
-                          shape: const StadiumBorder()
-                      ),
-                      child: const Text(
-                        "Sign In",
-                        style: TextStyle(color: Color(0xF6F5F5FF), fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: (){
-                        userLogin();
-
-                        Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
-
+                        onPressed: (){
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
                         },
-                    ),
-                  ),
-
-                  const SizedBox(height: 15),
-
-                  // other login method
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Row(
-                      children: [
-                        const Expanded(
-                          child: Divider(
-                            thickness: 1.5,
-                            color: Colors.deepOrange,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 10.0),
-                          child: Text(
-                            'Or continue with',
-                            style: TextStyle(color: Color(0xF6F5F5FF),
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20),
-                          ),
-                        ),
-
-                        Expanded(
-                          child: Divider(
-                            thickness: 1.5,
-                            color: Colors.deepOrange[400],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 15),
-
-                  // google + fb login buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // google button
-                      SquareTile(
-                        onTap: () async{
-                            final user = await AuthService().signInWithGoogle();
-                            if (user != null && mounted){
-                              Navigator.push(context,
-                              MaterialPageRoute(builder: (_) => HomePage()));
-                            }
-                            else{
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Error signing in with Google'),
-                                  ),
-                              );
-                            }
-                        },
-                          imagePath: 'lib/images/google.png'),
-
-
-
-                      const SizedBox(width: 10.0),
-
-                      // facebook button
-                      SquareTile(
-                          onTap: (){},
-                          imagePath: 'lib/images/facebook.png'),
-
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-
-                  // doesn't have an account
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text('Don\'t have an account?',
-                        style: TextStyle(
-                            color: Color(0xF6F5F5FF),
-                            fontWeight: FontWeight.normal,
-                            fontSize: 18),
                       ),
-                      const SizedBox(width: 4),
+                      fillColor: Colors.deepPurple,
+                      filled: true,
+                      hintStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    style: const TextStyle(color: Colors.white), // Text color while typing
+                  ),
+                ),
+
+
+                const SizedBox(height: 10),
+
+                // forgot password
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
                       GestureDetector(
                         onTap: (){
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => RegisterPage(onTap: (){}),)
-                          );
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context){
+                                return  ForgotPasswordPage();
+                              }));
                         },
-                        child:  Text(
-                          'Create Account',
-                          style: GoogleFonts.passionOne(
-                            textStyle: const TextStyle(
-                                color: Colors.deepOrange,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20
-                            ),
+                        child: const Text(
+                          'Forgot Password?',
+                          style: TextStyle(
+                            color: Color(0xF6F5F5FF),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
-                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 10),
 
+                // log in button
+                SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrangeAccent,
+                        elevation: 10,
+                        shape: const StadiumBorder()
+                    ),
+                    child: const Text(
+                      "Sign In",
+                      style: TextStyle(color: Color(0xF6F5F5FF), fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: (){
+                      userLogin();
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>  HomePage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
+                /*
+                // other login method
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Divider(
+                          thickness: 1.5,
+                          color: Colors.deepOrange,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          'Or continue with',
+                          style: TextStyle(color: Color(0xF6F5F5FF),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
                       ),
 
+                      Expanded(
+                        child: Divider(
+                          thickness: 1.5,
+                          color: Colors.deepOrange[400],
+                        ),
+                      ),
                     ],
-                  )
+                  ),
+                ),
+                const SizedBox(height: 15),
 
-                ],
-              ),
+                // google + fb login buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // google button
+                    SquareTile(
+                        onTap: () async{
+                          final user = await AuthService().signInWithGoogle();
+                          if (user != null && mounted){
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) => HomePage()));
+                          }
+                          else{
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Error signing in with Google'),
+                              ),
+                            );
+                          }
+                        },
+                        imagePath: 'lib/images/google.png'),
+
+
+
+                    const SizedBox(width: 10.0),
+
+                    // facebook button
+                    SquareTile(
+                        onTap: (){},
+                        imagePath: 'lib/images/facebook.png'),
+
+                  ],
+                ),
+                */
+                const SizedBox(height: 25),
+
+                // doesn't have an account
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('Don\'t have an account?',
+                      style: TextStyle(
+                          color: Color(0xF6F5F5FF),
+                          fontWeight: FontWeight.normal,
+                          fontSize: 18),
+                    ),
+                    const SizedBox(width: 4),
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => RegisterPage(onTap: (){}),)
+                        );
+                      },
+                      child:  Text(
+                        'Create Account',
+                        style: GoogleFonts.passionOne(
+                          textStyle: const TextStyle(
+                              color: Colors.deepOrange,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
             ),
           ),
         ),
-     // ),
+      ),
+      // ),
     );
   }
 }

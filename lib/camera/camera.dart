@@ -33,7 +33,7 @@ class TakePictureScreen extends StatefulWidget {
     super.key,
     required this.camera,
   }
-  );
+      );
 
   final CameraDescription camera;
 
@@ -74,16 +74,16 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
       //final BuildContext context = this.context;
       final picker = ImagePicker();
       final XFile? pickedImage =
-        await picker.pickImage(source: ImageSource.gallery);
+      await picker.pickImage(source: ImageSource.gallery);
 
       if(pickedImage != null){
         print("Before navigation");
         //display image on a new screen
         await Navigator.of(context).push(
           MaterialPageRoute(
-              builder: (context) => DisplayPictureScreen(
-                  imagePath: pickedImage.path,
-              ),
+            builder: (context) => DisplayPictureScreen(
+              imagePath: pickedImage.path,
+            ),
           ),
         );
         print("After navigation");
@@ -100,7 +100,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Take A picture')),
+          title: const Text('Take A picture')),
       // You must wait until the controller is initialized before displaying the
       // camera preview. Use a FutureBuilder to display a loading spinner until the
       // controller has finished initializing.
@@ -137,7 +137,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
 
                 // Create a reference to the firebase storage bucket
                 final ref = firebase_storage.FirebaseStorage.instance
-                  .ref().child('images/${DateTime.now().microsecondsSinceEpoch}.png');
+                    .ref().child('images/${DateTime.now().microsecondsSinceEpoch}.png');
 
                 // Upload the image to the firebase storage
                 await ref.putFile(File(image.path));
@@ -151,12 +151,12 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
                 // If the picture was taken, display it on a new screen
                 await Navigator.of(context).push(
                   MaterialPageRoute(
-                      builder: (context) => DisplayPictureScreen(
-                        // Pass the automatically generated path to
-                        // DisplayPictureScreen widget
-                        imagePath: image.path,
-                       // imageUrl: imageUrl.toString(),
-                      ),
+                    builder: (context) => DisplayPictureScreen(
+                      // Pass the automatically generated path to
+                      // DisplayPictureScreen widget
+                      imagePath: image.path,
+                      // imageUrl: imageUrl.toString(),
+                    ),
                   ),
                 );
               } catch (e){
@@ -167,12 +167,12 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
             child: const Icon(Icons.camera_alt),
           ),
           FloatingActionButton(
-              onPressed: () async {
-                // Display image from gallery
-                await _displayImageFoundFromGallery();
-              },
+            onPressed: () async {
+              // Display image from gallery
+              await _displayImageFoundFromGallery();
+            },
             child: const Icon(Icons.photo_library),
-              ),
+          ),
         ],
       ),
     );

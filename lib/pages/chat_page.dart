@@ -28,13 +28,13 @@ class _ChatPageState extends State<ChatPage> {
   void sendMessage() async{
     // only send message if there is something to send
     if (_messageController.text.isNotEmpty){
-     // String profilePicUrl = "lib/images/winter.jpg"; // fetch current user's profile pic
+      // String profilePicUrl = "lib/images/winter.jpg"; // fetch current user's profile pic
 
       await _chatService.sendMessage(
-          widget.receiverUserID,
-          _messageController.text,
-          widget.senderprofilePicUrl,
-          //"",
+        widget.receiverUserID,
+        _messageController.text,
+        //widget.senderprofilePicUrl,
+        //"",
 
       );
       // clear the text controller after sending the message
@@ -49,8 +49,8 @@ class _ChatPageState extends State<ChatPage> {
       backgroundColor: Colors.indigo[300],
       appBar: AppBar(
         title: Text(widget.receiverUserEmail,
-        style: const TextStyle(color: Colors.white),),
-      backgroundColor: Colors.indigo[900],),
+          style: const TextStyle(color: Colors.white),),
+        backgroundColor: Colors.indigo[900],),
       body: Column(
         children: [
           // Messages
@@ -71,7 +71,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildMessageList(){
     return StreamBuilder(
       stream: _chatService.getMessages(
-        widget.receiverUserID, _firebaseAuth.currentUser!.uid),
+          widget.receiverUserID, _firebaseAuth.currentUser!.uid),
       builder: (context, snapshot){
         if(snapshot.hasError){
           return Text('Error${snapshot.error}');
@@ -233,7 +233,7 @@ class _ChatPageState extends State<ChatPage> {
               onPressed: sendMessage,
               icon:
               const Icon(
-                Icons.arrow_upward,
+                Icons.send,
                 size: 40,
                 color: Colors.black,))
         ],

@@ -3,34 +3,46 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:apptalk/pages/register.dart';
 
 class AuthService extends ChangeNotifier{
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  //bool isEmailVerified = _auth.currentUser?.isEmailVerified ?? false;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+
   //Sign In
-  Future<UserCredential> signInWithEmailandPassword(String email,
+  Future<User?> signInWithEmailandPassword(String email,
       String password) async {
     try {
       // sign in
-      UserCredential userCredential =
-      await _firebaseAuth.signInWithEmailAndPassword(
-          email: email,
-          password: password);
+      final UserCredential userCredential = await _auth
+          .signInWithEmailAndPassword(email:email , password:password);
+      return userCredential.user;
 
-      //add any document for the user in users collection if doesnt already
+      /*//add any document for the user in users collection if doesnt already
       _firestore.collection('users').doc(userCredential.user!.uid).set({
         'uid': userCredential.user!.uid,
         'email': email,
 
       }, SetOptions(merge: true));
 
-      return userCredential;
+      return userCredential; */
     }
     on FirebaseAuthException catch (e) {
       throw Exception(e.code);
+    }
+  }
+
+  Future<void> verifyEmail() async {
+    final User? user = _auth.currentUser;
+    if(user != null){
+      await user.sendEmailVerification();
+      print('Email verification sent to ${user.email}');
+    } else{
+      print("No user currently signed in");
     }
   }
 
@@ -44,11 +56,13 @@ class AuthService extends ChangeNotifier{
         throw Exception('All fields are required');
       }
 
-      final UserCredential userCredential = await _firebaseAuth
+
+
+      final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-          );
+        email: email,
+        password: password,
+      );
       //user.uid;
 
       // call our database service to update the user data
@@ -93,7 +107,7 @@ class AuthService extends ChangeNotifier{
 
       // sign in with users credential
       final UserCredential authResult =
-      await _firebaseAuth.signInWithCredential(credential);
+      await _auth.signInWithCredential(credential);
       final User? user = authResult.user;
 
       final userDoc = await _firestore.collection('users').doc(user!.uid).get();

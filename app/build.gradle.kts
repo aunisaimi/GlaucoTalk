@@ -5,6 +5,7 @@
 plugins {
     id("apptalk.kotlin-application-conventions")
 
+
 }
 
 dependencies {

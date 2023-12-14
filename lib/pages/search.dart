@@ -30,16 +30,13 @@ class _SearchPageState extends State<SearchPage> {
 
   }
 
+
   Future<void> searchUsers() async{
-    final String searchText = searchController.text;
-    final String usernameText = usernameController.text;
     final String nameText = nameController.text;
     final String emailText = emailController.text;
 
     final QuerySnapshot userSnapshot = await FirebaseFirestore.instance
         .collection('users')
-        .where('userId', isEqualTo: searchText)
-        .where('username', isEqualTo: usernameText)
         .where('name', isEqualTo: nameText)
         .where('email', isEqualTo: emailText)
         .get();
@@ -94,7 +91,7 @@ class _SearchPageState extends State<SearchPage> {
                          subtitle: Column(
                            crossAxisAlignment: CrossAxisAlignment.start,
                            children: [
-                             Text("Username: ${userData['username'] ?? ''}"),
+                             Text("Name: ${userData['name'] ?? ''}"),
                              Text("Email: ${userData['email'] ?? ''}"),
                            ],
                          ),

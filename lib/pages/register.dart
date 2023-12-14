@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:apptalk/firebase/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'dart:core';
 
 
 class RegisterPage extends StatefulWidget {
@@ -47,6 +48,13 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // try register user
     try {
+
+      // Validate the email address
+      if (!isValidEmail(emailController.text)) {
+        showErrorMessage("Please enter a valid email address");
+        return; // Don't proceed with registration if the email is invalid
+      }
+
       // check if password entered is same
       if (passwordController.text == confirmPasswordController.text) {
         // create a new user in Firebase authentication
@@ -105,6 +113,21 @@ class _RegisterPageState extends State<RegisterPage> {
       },
     );
   }
+
+  bool isValidEmail(String email) {
+    // Define a regular expression pattern for a valid email address
+    // This pattern checks for a basic valid email format, but it's not foolproof.
+    // A more comprehensive pattern can be used for stricter validation.
+    final pattern = r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$';
+
+    // Create a regular expression object
+    final regex = RegExp(pattern);
+
+    // Use the regex to match the email address
+    return regex.hasMatch(email);
+  }
+
+
 
   Future<void> _selectDate() async{
     DateTime? selected = await showDatePicker(
@@ -203,7 +226,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: const TextStyle(
                       color: Colors.white,
                     ),
-                    obscureText: true,
+                    obscureText: false,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.white),
