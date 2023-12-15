@@ -1,15 +1,14 @@
 import 'package:apptalk/pages/home_page.dart';
-import 'package:apptalk/pages/setting/feedback_page.dart';
 import 'package:apptalk/pages/setting/contact_us.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'feedback_page.dart'; // Import the FeedbackPage file
 
 class HelpCenter extends StatefulWidget {
-    const HelpCenter({super.key});
+  const HelpCenter({Key? key}) : super(key: key);
 
   @override
-  State<HelpCenter> createState() => _HelpCenterState();
+  _HelpCenterState createState() => _HelpCenterState();
 }
 
 class _HelpCenterState extends State<HelpCenter> {
@@ -21,88 +20,92 @@ class _HelpCenterState extends State<HelpCenter> {
     return Scaffold(
       backgroundColor: myCustomColor,
       appBar: AppBar(
-        title:  Text(
-            "Help",
-        style: GoogleFonts.poppins(
-          textStyle: TextStyle(
-              color: myTextColor,
-          fontSize: 25,
-          fontWeight: FontWeight.w600),
-        ),),
         backgroundColor: Colors.black54,
-
+        title: Text(
+          "Help",
+          style: GoogleFonts.aBeeZee(
+            fontSize: 25,
+            color: myTextColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         leading: IconButton(
-          onPressed: (){
+          onPressed: () {
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => HomePage()));
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: Colors.white,),
+            color: Colors.white,
+          ),
         ),
       ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(25.0),
+      body: Container(
+        padding: const EdgeInsets.all(10),
         child: ListView(
-          children: <Widget>[
-             Text(
-              "Help Center",
-              style: GoogleFonts.poppins(
-                textStyle: TextStyle(
-                    color: myTextColor,
-                    fontSize: 25,
-                    fontWeight: FontWeight.w600),
-              ),),
-            // Card(
-            //   child: ListTile(
-            //     leading: Icon(Icons.chat_outlined),
-            //     title: Text('Help Center'),
-            //   ),
-            // ),
-            // Divider(
-            //   color: Colors.white24, // Set the color of the divider
-            //   thickness: 2.0, // Set the thickness of the divider
-            //   height: 20.0, // Set the height of the divider
-            //   indent: 20.0, // Set the left indentation of the divider
-            //   endIndent: 20.0, // Set the right indentation of the divider
-            // ),
-            GestureDetector(
-              onTap: () {
-                // Navigate to Contact Us Screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const ContactUsScreen()
-                  ),
-                );
-                const SizedBox(height: 20);
-              },
+          children: [
+            SizedBox(height: 40),
+            Row(
+              children: [
+                Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  "Help Center",
+                  style: GoogleFonts.poppins(
+                    textStyle: TextStyle(
+                      fontSize: 25,
+                      color: myTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),),)
+              ],
+            ),
+            Divider(height: 20, thickness: 1),
+            SizedBox(height: 10),
+            buildHelpOption(context, "Contact Us"),
+            buildHelpOption(context, "Send Feedback"),
+            // Other help options...
+          ],
+        ),
+      ),
+    );
+  }
 
-              child: const Card(
-                child: ListTile(
-                  title: Text('Contact Us'),
-                  trailing: Icon(Icons.arrow_right),
-                ),
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // Navigate to Contact Us Screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const FeedbackPage()),
-                );
-              },
-              child: const Card(
-                child: ListTile(
-                  title: Text('Send Feedback'),
-                  trailing: Icon(Icons.arrow_right),
-                ),
-              ),
-            ),
+  GestureDetector buildHelpOption(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () {
+        if (title == "Contact Us") {
+          // Navigate to ContactUsScreen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ContactUsScreen()),
+          );
+        } else if (title == "Send Feedback") {
+          // Navigate to FeedbackPage
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FeedbackPage()),
+          );
+        }
+        // Add navigation for other options if needed
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title,
+              style: GoogleFonts.aBeeZee(
+                textStyle: TextStyle(
+                  fontSize: 20,
+                  color: myTextColor,
+                  fontWeight: FontWeight.bold,
+                ),),),
+            const Icon(Icons.arrow_forward_ios, color: Colors.grey)
           ],
         ),
       ),
