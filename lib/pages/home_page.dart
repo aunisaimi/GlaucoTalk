@@ -3,13 +3,16 @@ import 'package:apptalk/firebase/auth_service.dart';
 import 'package:apptalk/pages/chat_page.dart';
 import 'package:apptalk/pages/login.dart';
 import 'package:apptalk/pages/search.dart';
+import 'package:apptalk/pages/setting/Notification%20page/noti_page.dart';
 import 'package:apptalk/pages/setting/account_center.dart';
 import 'package:apptalk/pages/setting/help_center.dart';
+import 'package:apptalk/pages/setting/theme/Apparance.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:apptalk/pages/profile_page.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -48,6 +51,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
 
   late CameraDescription? firstCamera;
 
@@ -137,41 +141,21 @@ class _HomePageState extends State<HomePage> {
       length: 3,
       initialIndex: 0,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: myCustomColor,
         appBar: AppBar(
-          backgroundColor: Colors.indigo[900],
-          title: const Text(
-            'CHAT',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 24,
-              color: Colors.yellowAccent,
+          iconTheme: const IconThemeData(color: Colors.white),
+          backgroundColor: Colors.black54,
+          title: Text(
+            'C H A T',
+            style: GoogleFonts.aBeeZee(
+              textStyle: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 24,
+                color: Colors.yellow,
+              ),
             ),
           ),
-
           actions: [
-            // Sign out button
-            IconButton(
-              onPressed: ()async{
-                try{
-                  await FirebaseAuth.instance.signOut();
-                  // Navigate to login page after sign out
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          LoginPage(onTap: () {  },), // Navigate to your home page
-                    ),
-                  );
-                } catch(e){
-                  // Handle any errors that might occur during sign-out
-                  print("Error signing out: $e");
-                }
-              },
-              icon: const Icon(Icons.logout, size: 24,
-                color: Colors.white,),
-            ),
-
             // Search button
             IconButton(
               onPressed: () {
@@ -194,15 +178,18 @@ class _HomePageState extends State<HomePage> {
               onPressed: () {
                 navigateToTakePictureScreen(context, firstCamera!);
               },
-              icon: const Icon(Icons.camera_alt,
+              icon: const Icon(
+                Icons.camera_alt,
                 color: Colors.white,),
             ),
           ],
 
           bottom: const TabBar(
-            labelColor: Colors.white,
-            labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),// Color for the selected tab's text
-            unselectedLabelColor: Colors.black, // Color for unselected tabs' text
+            labelColor: Colors.orange,
+            labelStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14),// Color for the selected tab's text
+            unselectedLabelColor: Colors.white, // Color for unselected tabs' text
             tabs: [
               Tab(text: 'Chats'),
               Tab(text: 'Status'),
@@ -221,15 +208,18 @@ class _HomePageState extends State<HomePage> {
                     // Display user's name
                     Text(
                       'Logged in as: ${nameController.text}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 18,
+                        color: myTextColor,
                       ),
                     ),
                     // Display user's email
                     Text(
                       'Email: ${emailController.text}',
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: myTextColor),
                     ),
                   ],
                 ),
@@ -271,6 +261,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.grey,
                       ),
                     ),
+                    const SizedBox(width: 5),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Column(
@@ -284,7 +275,7 @@ class _HomePageState extends State<HomePage> {
                               color: Color(0xF6F5F5FF),
                             ),
                           ),
-                          const SizedBox(height: 8,),
+                          const SizedBox(height: 4,),
                           Text(
                             '@' + usernameController.text, // Display the user's username
                             style: const TextStyle(
@@ -338,11 +329,13 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 5),
 
               ListTile(
-                leading: const Icon(Icons.account_circle_outlined,
+                leading: const Icon(
+                  Icons.account_circle_outlined,
                   color: Color(0xF6F5F5FF),
                   size: 40,
                 ),
-                title: const Text('Account',
+                title: const Text(
+                  'Account',
                   style: TextStyle(
                     fontSize: 30,
                     color:Color(0xF6F5F5FF),
@@ -361,14 +354,17 @@ class _HomePageState extends State<HomePage> {
                   );
                 },
               ),
+
               const SizedBox(height: 8,),
+
               ListTile(
                 leading: const Icon(
                   Icons.app_settings_alt_outlined,
                   color: Color(0xF6F5F5FF),
                   size: 40,
                 ),
-                title: const Text('Appearance',
+                title: const Text(
+                  'Appearance',
                   style: TextStyle(
                     fontSize: 30,
                     color: Color(0xF6F5F5FF),),
@@ -379,6 +375,11 @@ class _HomePageState extends State<HomePage> {
                   _onItemTapped(1);
                   // Then close the drawer
                   Navigator.pop(context);
+                  Navigator.push(context,
+                    MaterialPageRoute(
+                        builder: (context) => const ThemePage()
+                    ),
+                  );
                 },
               ),
               const SizedBox(height: 8,),
@@ -388,7 +389,8 @@ class _HomePageState extends State<HomePage> {
                   color: Color(0xF6F5F5FF),
                   size: 40,
                 ),
-                title: const Text('Chats',
+                title: const Text(
+                  'Chats',
                   style: TextStyle(
                     fontSize: 30,
                     color: Color(0xF6F5F5FF),),
@@ -419,6 +421,11 @@ class _HomePageState extends State<HomePage> {
                   _onItemTapped(3);
                   // Then close the drawer
                   Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                      MaterialPageRoute(
+                          builder: (context) => const NotiPage())
+                  );
                 },
               ),
               const SizedBox(height: 8,),
@@ -441,7 +448,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.pop(context);
                   Navigator.push(context,
                     MaterialPageRoute(
-                        builder: (context) => const HelpCenter()
+                        builder: (context) =>  const HelpCenter()
                     ),
                   );
                 },
@@ -459,11 +466,23 @@ class _HomePageState extends State<HomePage> {
                     color: Color(0xF6F5F5FF),),
                 ),
                 selected: _selectedIndex == 5,
-                onTap: (){
+                onTap: () async {
                   // Update the state of the app
                   _onItemTapped(5);
                   // Then close the drawer
                   Navigator.pop(context);
+
+                  try{
+                    await FirebaseAuth.instance.signOut();
+                    // Navigate to login page after signed out
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoginPage(onTap: () {})));
+                  }
+                  catch (e){
+                    print("Error signing out: ${e}");
+                  }
                 },
               ),
               const SizedBox(height: 8,),
@@ -499,15 +518,17 @@ class _HomePageState extends State<HomePage> {
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
     // display all users except current user
-    if(_auth.currentUser!.email != data['email']){
+    if(_auth.currentUser!.email != data['name']){
       return ListTile(
-        title: Text(data['email']),
+        title: Text(
+            data['name'],
+        style: TextStyle(color: myTextColor),),
         onTap: (){
           // pass the clicked user's UID to the chat page
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => ChatPage(
-              receiverUserEmail: data['email'] ?? '',
+              receiverName: data['name'] ?? '',
               receiverUserID: data['uid'] ?? '',
               senderprofilePicUrl: data['profilePicUrl'] ?? '',
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class Message{
   final String senderId;
   final String senderEmail;
+  final String senderName;
   final String receiverId;
   final String message;
   final Timestamp timestamp;
@@ -13,6 +14,7 @@ class Message{
   Message({
     required this.senderId,
     required this.senderEmail,
+    required this.senderName,
     required this.receiverId,
     required this.timestamp,
     required this.message,
@@ -25,6 +27,7 @@ class Message{
     return{
       'senderId': senderId,
       'senderEmail': senderEmail,
+      'senderName': senderName,
       'receiverId': receiverId,
       'message': message,
       'timestamp': timestamp,

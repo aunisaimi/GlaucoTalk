@@ -1,28 +1,61 @@
+import 'package:apptalk/pages/home_page.dart';
 import 'package:apptalk/pages/setting/feedback_page.dart';
 import 'package:apptalk/pages/setting/contact_us.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
-class HelpCenter extends StatelessWidget {
-  const HelpCenter({super.key});
+class HelpCenter extends StatefulWidget {
+    const HelpCenter({super.key});
+
+  @override
+  State<HelpCenter> createState() => _HelpCenterState();
+}
+
+class _HelpCenterState extends State<HelpCenter> {
+  Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: myCustomColor,
       appBar: AppBar(
-        title: const Text("Help"),
-        backgroundColor: const Color(0xFF00008B),
+        title:  Text(
+            "Help",
+        style: GoogleFonts.poppins(
+          textStyle: TextStyle(
+              color: myTextColor,
+          fontSize: 25,
+          fontWeight: FontWeight.w600),
+        ),),
+        backgroundColor: Colors.black54,
+
+        leading: IconButton(
+          onPressed: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage()));
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,),
+        ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: ListView(
           children: <Widget>[
-            const Text(
+             Text(
               "Help Center",
-              style: TextStyle(
-                fontSize: 30,
-              ),
-            ),
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(
+                    color: myTextColor,
+                    fontSize: 25,
+                    fontWeight: FontWeight.w600),
+              ),),
             // Card(
             //   child: ListTile(
             //     leading: Icon(Icons.chat_outlined),
@@ -45,7 +78,9 @@ class HelpCenter extends StatelessWidget {
                       builder: (context) => const ContactUsScreen()
                   ),
                 );
+                const SizedBox(height: 20);
               },
+
               child: const Card(
                 child: ListTile(
                   title: Text('Contact Us'),

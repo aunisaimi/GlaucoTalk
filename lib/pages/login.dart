@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) =>  HomePage(),
         ),
       );
     }
@@ -145,7 +145,9 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         backgroundColor: myCustomColor,
         leading: IconButton(
-          icon: const Icon(Icons.home, color: Colors.white,),
+          icon: const Icon(
+            Icons.home,
+            color: Colors.white,),
           iconSize: 40,
           onPressed: (){
             Navigator.of(
@@ -293,9 +295,11 @@ class _LoginPageState extends State<LoginPage> {
                         elevation: 10,
                         shape: const StadiumBorder()
                     ),
-                    child: const Text(
+                    child:  Text(
                       "Sign In",
-                      style: TextStyle(color: Color(0xF6F5F5FF), fontSize: 16,
+                      style: TextStyle(
+                          color: myTextColor,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold),
                     ),
                     onPressed: (){
@@ -404,7 +408,6 @@ class _LoginPageState extends State<LoginPage> {
                         style: GoogleFonts.passionOne(
                           textStyle: const TextStyle(
                               color: Colors.deepOrange,
-                              fontWeight: FontWeight.bold,
                               fontSize: 20
                           ),
                         ),

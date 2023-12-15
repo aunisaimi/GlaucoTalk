@@ -6,13 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
-  final String receiverUserEmail;
+  final String receiverName;
   final String receiverUserID;
   final String senderprofilePicUrl;
 
   const ChatPage({
     super.key,
-    required this.receiverUserEmail,
+    required this.receiverName,
     required this.receiverUserID,
     required this.senderprofilePicUrl});
 
@@ -33,6 +33,7 @@ class _ChatPageState extends State<ChatPage> {
       await _chatService.sendMessage(
         widget.receiverUserID,
         _messageController.text,
+        widget.receiverName,
         //widget.senderprofilePicUrl,
         //"",
 
@@ -48,7 +49,7 @@ class _ChatPageState extends State<ChatPage> {
     return Scaffold(
       backgroundColor: Colors.indigo[300],
       appBar: AppBar(
-        title: Text(widget.receiverUserEmail,
+        title: Text(widget.receiverName,
           style: const TextStyle(color: Colors.white),),
         backgroundColor: Colors.indigo[900],),
       body: Column(
@@ -211,7 +212,6 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
-
 
   // build message input
   Widget _buildMessageInput(){

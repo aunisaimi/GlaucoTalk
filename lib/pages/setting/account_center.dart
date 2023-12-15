@@ -1,5 +1,7 @@
-import 'package:apptalk/pages/password/change_password.dart';
+import 'package:apptalk/pages/home_page.dart';
+import 'package:apptalk/pages/setting/change_password.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 
 class SettingPageUI extends StatefulWidget {
@@ -10,16 +12,30 @@ class SettingPageUI extends StatefulWidget {
 }
 
 class _SettingPageUIState extends State<SettingPageUI> {
+  Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: myCustomColor,
       appBar: AppBar(
-        title: const Text(
+        backgroundColor: Colors.black54,
+        title: Text(
             "Account",
-            style: TextStyle(
-                fontSize: 22)),
+            style: GoogleFonts.aBeeZee(
+                textStyle: TextStyle(
+                fontSize: 25,
+                color: myTextColor,
+                  fontWeight: FontWeight.bold,
+                ),),),
         leading: IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+                context,
+            MaterialPageRoute(builder: (context) => HomePage()));
+          },
           icon: const Icon(
             Icons.arrow_back,
             color: Colors.white,
@@ -31,22 +47,24 @@ class _SettingPageUIState extends State<SettingPageUI> {
         child: ListView(
           children: [
             const SizedBox(height: 40),
-            const Row(
+              Row(
               children: [
-                Icon(
-                  Icons.person,
-                  color: Colors.blue,
+                const Icon(
+                  Icons.person_3_rounded,
+                  color: Colors.white,
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 30),
                 Text(
                     "Account Center",
-                    style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold))
-
+                  style: GoogleFonts.poppins(
+                    textStyle: TextStyle(
+                      fontSize: 25,
+                      color: myTextColor,
+                      fontWeight: FontWeight.bold,
+                    ),),),
               ],
             ),
-            const Divider(height: 20, thickness: 1),
+            const Divider(height: 40, thickness: 4),
             const SizedBox(height: 10),
             buildAccountOption(
                 context, "Change Password"),
@@ -73,14 +91,15 @@ class _SettingPageUIState extends State<SettingPageUI> {
           children: [
             Text(
                 title,
-                style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600]
-            )),
+                style: GoogleFonts.aBeeZee(
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    color: myTextColor,
+                    fontWeight: FontWeight.bold,
+                  ),),),
             const Icon(
                 Icons.arrow_forward_ios,
-                color: Colors.black)
+                color: Colors.white)
           ],
         ),
       ),

@@ -11,11 +11,12 @@ class ChatService extends ChangeNotifier{
   final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
   // SEND MESSAGES
-  Future<void> sendMessage(String receiverId, String message) async{
+  Future<void> sendMessage(String receiverId, String message, String name) async{
 
     // get current user info
     final String currentUserId = _firebaseAuth.currentUser!.uid;
     final String currentUserEmail = _firebaseAuth.currentUser!.email.toString();
+    //final String currentName = _firebaseAuth.currentUser!.name.toString();
 
     final DocumentSnapshot userDoc = await _fireStore
         .collection('users')
@@ -23,13 +24,14 @@ class ChatService extends ChangeNotifier{
         .get();
 
     final String currentUserProfile = userDoc['profilePictureUrl'] ?? '';
-
+    final String currentName = userDoc['name'] ?? '';
     final Timestamp timestamp = Timestamp.now();
 
     // create a new message
     Message newMessage = Message(
         senderId: currentUserId,
         senderEmail: currentUserEmail,
+        senderName: currentName,
         receiverId: receiverId,
         timestamp: timestamp,
         message: message,

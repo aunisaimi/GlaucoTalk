@@ -1,4 +1,7 @@
+import 'package:apptalk/pages/home_page.dart';
+import 'package:apptalk/pages/setting/help_center.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
 
@@ -7,59 +10,143 @@ class FeedbackPage extends StatefulWidget {
 }
 
 class _FeedbackScreenState extends State<FeedbackPage> {
-
+  Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
   int _rating = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: myCustomColor,
       appBar: AppBar(
-        title: const Text("Feedback"),
-        backgroundColor: const Color(0xFF00008B),
+        backgroundColor: Colors.black54,
+        title:  Text(
+            "Feedback",
+          style: GoogleFonts.poppins(
+            textStyle: TextStyle(
+                color: myTextColor,
+                fontSize: 25,
+                fontWeight: FontWeight.w600),
+          ),),
+
+        leading: IconButton(
+          onPressed: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const HelpCenter()));
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,),
+        ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(30.0),
         child: Column(
           children: [
-            const Text(
+             Text(
               "Rate Your Experience",
-              style: TextStyle(
-                  fontSize: 30
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(
+                    color: myTextColor,
+                    fontSize: 30,
+                    fontWeight: FontWeight.w600),
               ),
             ),
-            const Text(
+             const SizedBox(height: 10,),
+
+             Text(
               "Are you Satisfied with the Application?",
-              style: TextStyle(
-                fontSize: 16.0, // Adjust the font size as needed
+              style: GoogleFonts.poppins(
+                textStyle: TextStyle(
+                    color: myTextColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
               ),
             ),
+
+            const SizedBox(height: 10,),
+
             buildStar(),
             const Divider(
-              color: Colors.white24, // Set the color of the divider
+              color: Colors.white, // Set the color of the divider
               thickness: 2.0, // Set the thickness of the divider
               height: 20.0, // Set the height of the divider
               indent: 20.0, // Set the left indentation of the divider
               endIndent: 20.0, // Set the right indentation of the divider
             ),
-            const Text(
+
+            const SizedBox(height: 20,),
+
+             Text(
               "Tell us what can be Improved?",
-              style: TextStyle(
-                fontSize: 16,
+                style: GoogleFonts.poppins(
+                  textStyle: TextStyle(
+                      color: myTextColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                ),
+            ),
+
+            const SizedBox(height: 20,),
+
+             Padding(
+              padding:  const EdgeInsets.symmetric(horizontal: 25.0),
+              child: TextField(
+                decoration: InputDecoration(
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+
+                  ),
+                  hintText: 'Feedback',
+                  prefixIcon: const Icon(
+                    Icons.telegram,
+                    color: Colors.white,),
+                  fillColor: Colors.deepPurple,
+                  filled: true,
+                  hintStyle: TextStyle(
+                    color:  myTextColor,
+                  ),
+                ),
+                style: const TextStyle(
+                    color: Colors.white), // Text color while typing
               ),
             ),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: "feedback",
-                border: OutlineInputBorder(),
+
+            const SizedBox(height: 30,),
+
+            // send button
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepOrange[700],
+                    elevation: 10,
+                    shape: const StadiumBorder()
+                ),
+                child:  const Text(
+                  "SEND",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: (){
+                  buildSuccessPage();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>  HomePage(),
+                    ),
+                  );
+                },
               ),
-            ),
-            ElevatedButton(
-              onPressed: (){
-                // add save input to database function
-                Navigator.pop(context);
-                buildSuccessPage();
-              },
-              child: const Text("Send"),
             ),
           ],
         ),
@@ -80,7 +167,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
           },
           child: Icon(
             index < _rating ? Icons.star : Icons.star_border,
-            color: Colors.amber,
+            color: Colors.yellowAccent,
             size: 40.0,
           ),
         );
