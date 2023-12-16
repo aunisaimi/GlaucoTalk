@@ -11,6 +11,7 @@ class NotiPage extends StatefulWidget {
 
 class _NotiPageState extends State<NotiPage> {
   bool isSwitched = false;
+  bool isGroupNotiSwitched = false;
   Color myCustomColor = const Color(0xFF00008B);
   Color myTextColor = const Color(0xF6F5F5FF);
 
@@ -156,10 +157,10 @@ class _NotiPageState extends State<NotiPage> {
                     ),
                     const SizedBox(width: 100,),
                     Switch(
-                        value: isSwitched,
+                        value: isGroupNotiSwitched,
                         onChanged: (value){
                           setState(() {
-                            isSwitched = value;
+                            isGroupNotiSwitched = value;
                           });
                         }),
                   ],

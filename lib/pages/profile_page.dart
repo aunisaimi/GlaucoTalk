@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:apptalk/pages/home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 
@@ -15,6 +17,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   Uint8List? _image;
@@ -172,11 +176,30 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: myCustomColor,
       appBar: AppBar(
-        title: const Text("Edit Profile"),
-        backgroundColor: const Color(0xFF00008B),
+        title: Text(
+          "Edit Profile",
+          style: GoogleFonts.poppins(
+            textStyle: TextStyle(
+                color: myTextColor,
+                fontSize: 25,
+                fontWeight: FontWeight.w600),
+          ),),
+        backgroundColor: Colors.black54,
+        leading: IconButton(
+          onPressed: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage()));
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,),
+        ),
       ),
+
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -218,13 +241,19 @@ class _ProfilePageState extends State<ProfilePage> {
               DropdownButton(
                 value: dropdownvalue,
                 isExpanded: true,
-                icon: const Icon(Icons.arrow_drop_down_circle_sharp),
+                icon: const Icon(
+                    Icons.arrow_drop_down_circle,
+                color: Colors.white,
+                ),
                 items: <String>['Male', 'Female']
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(
                       value,
+                      style: TextStyle(
+                        color: myTextColor
+                      ),
                     ),
                   );
                 }).toList(),

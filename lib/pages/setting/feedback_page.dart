@@ -175,30 +175,41 @@ class _FeedbackScreenState extends State<FeedbackPage> {
     );
   }
 
+  void navigateToSuccessPage() {
+    // Save feedback to the database or perform other necessary actions here
+
+    // Navigate to the success page
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => buildSuccessPage()),
+    );
+  }
+
+
   Widget buildSuccessPage() {
     return Scaffold(
       backgroundColor: Colors.blue[900],
-      body: const SafeArea(
+      body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.green,
                 size: 100.0,
               ),
-              SizedBox(height: 20.0),
-              Text(
+              const SizedBox(height: 20.0),
+              const Text(
                 'Thanks for your feedback!',
                 style: TextStyle(
                   fontSize: 24.0,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(height: 10.0),
-              Text(
+              const SizedBox(height: 10.0),
+              const Text(
                 'We appreciate your feedback—it fuels our improvement process.',
                 style: TextStyle(
                   fontSize: 16.0,
@@ -206,10 +217,23 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                 ),
                 textAlign: TextAlign.center,
               ),
+              ElevatedButton(
+                  onPressed: (){
+                    navigateBackToHelpCenter();
+                  },
+                  child: const Text("Return")
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void navigateBackToHelpCenter(){
+    Navigator.popUntil(
+        context,
+            ModalRoute.withName('HelpCenterScreen'),
     );
   }
 }

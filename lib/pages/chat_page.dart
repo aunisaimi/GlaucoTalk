@@ -137,58 +137,53 @@ class _ChatPageState extends State<ChatPage> {
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;
 
-    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
-        ? MainAxisAlignment.end
-        : MainAxisAlignment.start;
+    // Determine if the message is sent by the current user
+    bool isCurrentUser = (data['senderId'] == _firebaseAuth.currentUser!.uid);
 
-    // Fetch the sender's and receiver's pfp URL's from firestore based on their ID's
-    Future<String?> fetchProfilePicUrl(String userId) async{
-      try{
+    // Fetch the sender's and receiver's profile picture URLs
+    Future<String?> fetchProfilePictureUrl(String userId) async {
+      try {
         final userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
             .get();
 
-        if(userDoc.exists){
-          return userDoc['senderprofilePicUrl'];
+        if (userDoc.exists) {
+          return userDoc['profilePictureUrl'];
         }
-      }  catch(e){
+      } catch (e) {
         print('Error fetching image: $e');
       }
       return null;
     }
 
     return FutureBuilder<String?>(
-      // fetch sender's pfp URL
-      future: fetchProfilePicUrl(data['senderId']),
+      // Fetch the profile picture URL based on the sender's ID
+      future: fetchProfilePictureUrl(data['senderId']),
       builder: (context, senderSnapshot) {
-        final senderProfilePicUrl = senderSnapshot.data;
+        final senderProfilePictureUrl = senderSnapshot.data;
 
         return FutureBuilder<String?>(
-          // fetch receiver's pfp URL
-          future: fetchProfilePicUrl(widget.receiverUserID),
+          // Fetch the profile picture URL based on the receiver's ID
+          future: fetchProfilePictureUrl(widget.receiverUserID),
           builder: (context, receiverSnapshot) {
-            final receiverProfilePicUrl = receiverSnapshot.data;
+            final receiverProfilePictureUrl = receiverSnapshot.data;
 
             return Container(
               child: Padding(
                 padding: const EdgeInsets.all(9.0),
-                child: Row( // row to arrange profile pic and bubble horizontally
-                  mainAxisAlignment: alignment, // determine whether profile should be on the left or right
-                  crossAxisAlignment: CrossAxisAlignment.start, //to make sure both profile and bubble align at the top
+                child: Row(
+                  mainAxisAlignment: isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (data['senderId'] != _firebaseAuth.currentUser!.uid)
+                    if (!isCurrentUser && receiverProfilePictureUrl != null)
                       CircleAvatar(
-                        backgroundImage: NetworkImage(senderProfilePicUrl ?? ""),
+                        backgroundImage: NetworkImage(receiverProfilePictureUrl),
                         maxRadius: 20,
                       ),
                     Expanded(
                       child: Column(
-                        crossAxisAlignment: (data['senderId'] ==
-                            _firebaseAuth.currentUser!.uid)
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-
+                        crossAxisAlignment: isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                         children: [
                           Text(data['senderEmail']),
                           const SizedBox(height: 8),
@@ -197,11 +192,10 @@ class _ChatPageState extends State<ChatPage> {
                         ],
                       ),
                     ),
-
-                    if(data['senderId'] == _firebaseAuth.currentUser!.uid)
+                    if (isCurrentUser && senderProfilePictureUrl != null)
                       CircleAvatar(
-                        backgroundImage: NetworkImage(receiverProfilePicUrl ?? ""),
-                        maxRadius: 20 ,// Remove extra comma here
+                        backgroundImage: NetworkImage(senderProfilePictureUrl),
+                        maxRadius: 20,
                       ),
                   ],
                 ),
@@ -212,6 +206,7 @@ class _ChatPageState extends State<ChatPage> {
       },
     );
   }
+
 
   // build message input
   Widget _buildMessageInput(){
