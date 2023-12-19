@@ -178,14 +178,16 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                         fontWeight: FontWeight.bold),
                   ),
                   onPressed: (){
-                    saveFeedbackData();
-                    // inform the user that the feedback has been sent
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => buildSuccessPage(),
-                      ),
-                    );
+                    if(messageController.text != ""){
+                      saveFeedbackData();
+                      // inform the user that the feedback has been sent
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => buildSuccessPage(),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),

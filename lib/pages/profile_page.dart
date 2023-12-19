@@ -149,6 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
     try{
       // get the current users ID
       final userId = FirebaseAuth.instance.currentUser!.uid;
+      print("This is image picture : ${_image}");
 
       // update the user document in firestore
       await FirebaseFirestore.instance
@@ -368,13 +369,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
-                onPressed: () {
+                onPressed: () async {
                   if(usernameController.text.isNotEmpty &&
                       nameController.text.isNotEmpty &&
                       passwordController.text.isNotEmpty &&
                       emailController.text.isNotEmpty){
                     updateUserData();
-                    uploadImageAndSave();
+                    await uploadImageAndSave();
                     Navigator.pop(context, true);
                   }
                   else{

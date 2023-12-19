@@ -17,28 +17,28 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   TextEditingController messageController = TextEditingController();
 
 
-  Future<bool> saveContactData() async{
+  Future<void> saveContactData() async{
     try{
 
       // get the current users ID
       final userId = FirebaseAuth.instance.currentUser!.uid;
 
       // Generate a unique document ID for each submission
-      final conDocRef = FirebaseFirestore.instance.collection('contacts').doc();
+      // final conDocRef = FirebaseFirestore.instance.collection('contacts').doc();
 
       // update the contacts document in firestore
-      await conDocRef.set({
+      await FirebaseFirestore.instance.collection('contacts').add({
         'userID': userId,
         'dateTime' : DateTime.now(),
         'comment' : messageController.text,
         'status' : 1,
       });
 
-      return true;
+      print("-------------------------Successfully saved data-------------------------------");
 
     } catch(e){
       print('Error saving data: $e');
-      return false;
+
     }
   }
 
@@ -150,14 +150,18 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     ),
                    onPressed: () {
                      // add save input to database function
-                     saveContactData();
-
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(
-                         builder: (context) => buildSuccessPage(),
-                       ),
-                     );
+                     // await saveContactData();
+                     print("Hello ${messageController.text}");
+                     if(messageController.text != ""){
+                       saveContactData();
+                       // inform the user that the feedback has been sent
+                       Navigator.push(
+                         context,
+                         MaterialPageRoute(
+                           builder: (context) => buildSuccessPage(),
+                         ),
+                       );
+                     }
                    },
                  ),
               ),
