@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundImage: profilePictureUrl != null &&
                             profilePictureUrl.isNotEmpty ?
                         NetworkImage(profilePictureUrl!) :
-                        const AssetImage('lib/images/winter.jpg') as
+                        AssetImage('assets/logo.png') as
                         ImageProvider<Object>,
                         backgroundColor: Colors.grey,
                       ),
@@ -447,9 +447,11 @@ class _HomePageState extends State<HomePage> {
                   // Then close the drawer
                   Navigator.pop(context);
                   Navigator.push(context,
-                    MaterialPageRoute(
-                        builder: (context) =>  const HelpCenter()
-                    ),
+                    MaterialPageRoute(builder: (_) {
+                      return const HelpCenter();
+                    },
+                      settings: const RouteSettings(name: 'HelpCenter',),
+                    )
                   );
                 },
               ),

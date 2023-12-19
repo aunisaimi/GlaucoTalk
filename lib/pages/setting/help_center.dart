@@ -34,8 +34,8 @@ class _HelpCenterState extends State<HelpCenter> {
           onPressed: (){
             Navigator.push(
                 context,
-            MaterialPageRoute(
-                builder: (context) => HomePage()));
+                MaterialPageRoute(builder: (context) => HomePage())
+            );
           },
           icon: const Icon(
             Icons.arrow_back,

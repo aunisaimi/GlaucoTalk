@@ -87,6 +87,8 @@ flutter:
   assets:
     - assets/
     - lib/images/winter.jpg
+    - lib/images/google.png
+    - lib/images/facebook.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
