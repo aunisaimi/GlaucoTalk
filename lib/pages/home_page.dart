@@ -1,6 +1,5 @@
 import 'package:apptalk/camera/camera.dart';
 import 'package:apptalk/firebase/auth_service.dart';
-import 'package:apptalk/main.dart';
 import 'package:apptalk/pages/chat_page.dart';
 import 'package:apptalk/pages/login.dart';
 import 'package:apptalk/pages/search.dart';
@@ -491,32 +490,32 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 8,),
 
-              ListTile(
-                leading: const Icon(
-                  Icons.camera_alt,
-                  color: Color(0xF6F5F5FF),
-                  size: 40,
-                ),
-                title: const Text(
-                  'Detect',
-                  style: TextStyle(
-                    fontSize: 30,
-                    color: Color(0xF6F5F5FF),),
-                ),
-                selected: _selectedIndex == 6,
-                onTap: () {
-                  // Update the state of the app
-                  _onItemTapped(1);
-                  // Then close the drawer
-                  Navigator.pop(context);
-                  Navigator.push(context,
-                    MaterialPageRoute(
-                        builder: (context) => const MyApp()
-                    ),
-                  );
-                },
-              ),
-              const SizedBox(height: 8,),
+              // ListTile(
+              //   leading: const Icon(
+              //     Icons.camera_alt,
+              //     color: Color(0xF6F5F5FF),
+              //     size: 40,
+              //   ),
+              //   title: const Text(
+              //     'Detect',
+              //     style: TextStyle(
+              //       fontSize: 30,
+              //       color: Color(0xF6F5F5FF),),
+              //   ),
+              //   selected: _selectedIndex == 6,
+              //   onTap: () {
+              //     // Update the state of the app
+              //     _onItemTapped(1);
+              //     // Then close the drawer
+              //     Navigator.pop(context);
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //           builder: (context) => const MyApp()
+              //       ),
+              //     );
+              //   },
+              // ),
+              // const SizedBox(height: 8,),
             ],
           ),
         ),
