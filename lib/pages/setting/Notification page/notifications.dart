@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
+FlutterLocalNotificationsPlugin();
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,7 +19,6 @@ void main() async{
 
   runApp(const MyApp());
 }
-
 
 class _MyAppState extends State<MyApp>{
 
@@ -48,14 +47,15 @@ class _MyAppState extends State<MyApp>{
   }
 
   Future<void> _showNotification(RemoteMessage message) async {
-    var androidDetails = const AndroidNotificationDetails(
-      'channel_id', 'channel_name',
+    var androidChannelSpecifics = const AndroidNotificationDetails(
+      '200785318528',
+      'GlaucoTalk',
       importance: Importance.max,
       priority: Priority.high,
     );
 
     var generalNotificationDetails =
-    NotificationDetails(android: androidDetails);
+    NotificationDetails(android: androidChannelSpecifics);
 
     await flutterLocalNotificationsPlugin.show(
       0, // ID

@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 
 class MyStoryBars extends StatelessWidget {
 
-  List<double> percentWatched=[];
+  final List<double> percentWatched;
+  final PageController controller;
 
-  MyStoryBars({required this.percentWatched});
+   const MyStoryBars({
+     Key? key,
+     required this.percentWatched,
+     required this.controller})
+       : super(key: key);
 
 
   @override

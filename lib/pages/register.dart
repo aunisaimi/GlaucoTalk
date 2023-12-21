@@ -88,7 +88,7 @@ class _RegisterPageState extends State<RegisterPage> {
       // pop loading circle before user logged in
       // Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
-      showErrorMessage(e.message ?? "An unknown error occured");
+      showErrorMessage(e.message ?? "An unknown error occurred");
     }
   }
 
@@ -391,57 +391,57 @@ class _RegisterPageState extends State<RegisterPage> {
 
                 const SizedBox(height: 15),
 
-                // other login method
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Divider(
-                          thickness: 1.5,
-                          color: Colors.deepOrange,
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Or continue with',
-                          style: TextStyle(
-                            color: Color(0xF6F5F5FF),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                        ),
-                      ),
-
-                      Expanded(
-                        child: Divider(
-                          thickness: 1.5,
-                          color: Colors.deepOrange,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // google + fb login buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // google button
-                    SquareTile(
-                        onTap: () => AuthService().signInWithGoogle(),
-                        imagePath: 'lib/images/google.png'),
-
-                    const SizedBox(width: 10.0),
-
-                    // facebook button
-                    SquareTile(
-                        onTap: (){},
-                        imagePath: 'lib/images/facebook.png'),
-
-                  ],
-                ),
+                // // other login method
+                // const Padding(
+                //   padding: EdgeInsets.symmetric(horizontal: 25.0),
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //         child: Divider(
+                //           thickness: 1.5,
+                //           color: Colors.deepOrange,
+                //         ),
+                //       ),
+                //       Padding(
+                //         padding: EdgeInsets.symmetric(horizontal: 10.0),
+                //         child: Text(
+                //           'Or continue with',
+                //           style: TextStyle(
+                //             color: Color(0xF6F5F5FF),
+                //           fontWeight: FontWeight.bold,
+                //           fontSize: 20),
+                //         ),
+                //       ),
+                //
+                //       Expanded(
+                //         child: Divider(
+                //           thickness: 1.5,
+                //           color: Colors.deepOrange,
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+                // const SizedBox(height: 20),
+                //
+                // // google + fb login buttons
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     // google button
+                //     SquareTile(
+                //         onTap: () => AuthService().signInWithGoogle(),
+                //         imagePath: 'lib/images/google.png'),
+                //
+                //     const SizedBox(width: 10.0),
+                //
+                //     // facebook button
+                //     SquareTile(
+                //         onTap: (){},
+                //         imagePath: 'lib/images/facebook.png'),
+                //
+                //   ],
+                // ),
                 const SizedBox(height: 25),
 
                 // doesn't have an account

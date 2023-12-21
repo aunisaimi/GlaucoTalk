@@ -1,7 +1,10 @@
+import 'dart:async' show Timer;
+
 import 'package:apptalk/camera/camera.dart';
 import 'package:apptalk/firebase/auth_service.dart';
 import 'package:apptalk/pages/chat_page.dart';
 import 'package:apptalk/pages/login.dart';
+import 'package:apptalk/pages/status/statuspage.dart';
 import 'package:apptalk/pages/search.dart';
 import 'package:apptalk/pages/setting/Notification%20page/noti_page.dart';
 import 'package:apptalk/pages/setting/account_center.dart';
@@ -14,6 +17,8 @@ import 'package:camera/camera.dart';
 import 'package:apptalk/pages/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../firebase/auth_controller.dart';
+
 
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
@@ -25,6 +30,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late Timer timer;
   String profilePictureUrl ='';
 
   TextEditingController nameController = TextEditingController();
@@ -57,6 +63,10 @@ class _HomePageState extends State<HomePage> {
 
   get floatingActionButton => null;
 
+  // void updateUserPresence() {
+  //   ref.read(authControllerProvider).updateUserPresence();
+  // }
+
   //Function to navigate to TakePictureScreen
   void navigateToTakePictureScreen(
       BuildContext context, CameraDescription camera){
@@ -77,6 +87,18 @@ class _HomePageState extends State<HomePage> {
     _initializeFirstCamera();
     // call fetchUserData to get user data
     fetchUserData();
+    // Schedule a microtask
+    //updateUserPresence();
+    timer = Timer.periodic(
+      const Duration(minutes: 1),
+          (timer) => setState(() {}),
+    );
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   Future<void> _initializeFirstCamera() async {
@@ -138,7 +160,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       initialIndex: 0,
       child: Scaffold(
         backgroundColor: myCustomColor,
@@ -189,11 +211,11 @@ class _HomePageState extends State<HomePage> {
             labelStyle: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 14),// Color for the selected tab's text
-            unselectedLabelColor: Colors.white, // Color for unselected tabs' text
+            unselectedLabelColor: Colors.white,
+            splashFactory: NoSplash.splashFactory,// Color for unselected tabs' text
             tabs: [
               Tab(text: 'Chats'),
               Tab(text: 'Status'),
-              Tab(text: 'Calls'),
             ],
           ),
         ),
@@ -229,15 +251,13 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             // Content for status tab
-            const Center(
-              child: Text('Status Tab Content'),
+            const Column(
+              children: [
+                Expanded(
+                  child: StatusPage(),
+                ),
+              ],
             ),
-            // Content for calls tab
-            // ignore: prefer_const_constructors
-            Center(
-              child: const Text('Calls Tab Content'),
-            ),
-
           ],
         ),
 
@@ -256,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                         backgroundImage: profilePictureUrl != null &&
                             profilePictureUrl.isNotEmpty ?
                         NetworkImage(profilePictureUrl!) :
-                        const AssetImage('lib/images/winter.jpg') as
+                        const AssetImage('assets/logo.png') as
                         ImageProvider<Object>,
                         backgroundColor: Colors.grey,
                       ),
@@ -357,6 +377,7 @@ class _HomePageState extends State<HomePage> {
 
               const SizedBox(height: 8,),
 
+
               ListTile(
                 leading: const Icon(
                   Icons.app_settings_alt_outlined,
@@ -412,7 +433,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 title: const Text('Notifications',
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 28,
                     color: Color(0xF6F5F5FF),),
                 ),
                 selected: _selectedIndex == 3,
@@ -422,7 +443,7 @@ class _HomePageState extends State<HomePage> {
                   // Then close the drawer
                   Navigator.pop(context);
                   Navigator.push(
-                    context,
+                      context,
                       MaterialPageRoute(
                           builder: (context) => const NotiPage())
                   );
@@ -447,9 +468,11 @@ class _HomePageState extends State<HomePage> {
                   // Then close the drawer
                   Navigator.pop(context);
                   Navigator.push(context,
-                    MaterialPageRoute(
-                        builder: (context) =>  const HelpCenter()
-                    ),
+                      MaterialPageRoute(builder: (_) {
+                        return const HelpCenter();
+                      },
+                        settings: const RouteSettings(name: 'HelpCenter',),
+                      )
                   );
                 },
               ),
@@ -486,6 +509,33 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(height: 8,),
+
+              // ListTile(
+              //   leading: const Icon(
+              //     Icons.camera_alt,
+              //     color: Color(0xF6F5F5FF),
+              //     size: 40,
+              //   ),
+              //   title: const Text(
+              //     'Detect',
+              //     style: TextStyle(
+              //       fontSize: 30,
+              //       color: Color(0xF6F5F5FF),),
+              //   ),
+              //   selected: _selectedIndex == 6,
+              //   onTap: () {
+              //     // Update the state of the app
+              //     _onItemTapped(1);
+              //     // Then close the drawer
+              //     Navigator.pop(context);
+              //     Navigator.push(context,
+              //       MaterialPageRoute(
+              //           builder: (context) => const MyApp()
+              //       ),
+              //     );
+              //   },
+              // ),
+              // const SizedBox(height: 8,),
             ],
           ),
         ),
@@ -521,8 +571,8 @@ class _HomePageState extends State<HomePage> {
     if(_auth.currentUser!.email != data['name']){
       return ListTile(
         title: Text(
-            data['name'],
-        style: TextStyle(color: myTextColor),),
+          data['name'],
+          style: TextStyle(color: myTextColor),),
         onTap: (){
           // pass the clicked user's UID to the chat page
           Navigator.push(
