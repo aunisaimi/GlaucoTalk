@@ -1,9 +1,5 @@
-import 'dart:io';
-import 'dart:math';
-
-import 'package:apptalk/components/story_circles.dart';
-import 'package:apptalk/pages/home_page.dart';
 import 'package:apptalk/pages/status/add_story_page.dart';
+import 'package:apptalk/pages/status/stories/view_stories_page.dart';
 import 'package:apptalk/pages/status/story_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -164,36 +160,46 @@ class _StatusPageState extends State<StatusPage> {
           SizedBox(
             height: 80,
             child: ListView.builder(
-              itemCount: 10,
+              itemCount: 10, // Replace with actual count
               scrollDirection: Axis.horizontal,
-              itemBuilder: (
-                  context, index) {
-                return StoryCircle(
-                  function: _openStory,
-                  profilePictureUrl: profilePictureUrl,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: _openStory,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(profilePictureUrl),
+                    radius: 30,
+                  ),
                 );
               },
             ),
           ),
-          // Display the user's profile picture
-          profilePictureUrl.isNotEmpty
-              ? Image.network(
-            profilePictureUrl,
-            width:  50,
-            height: 50,)
-              : const CircularProgressIndicator(), // this will appear if profile
-          // picture url is not available until the url is fetched
+          ElevatedButton(
+            child: const Text('View Stories'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ViewStoriesPage()),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: const Text('View Story Page'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StoryPage()),
+              );
+            },
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: ()  async {
+        onPressed: () {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>  AddStoryPage()));
-          // Navigate to the AddStoryPage when the FloatingActionButton is pressed
+            context,
+            MaterialPageRoute(builder: (context) => const AddStoryPage()),
+          );
         },
-
         child: const Icon(Icons.add),
       ),
     );
