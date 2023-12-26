@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
@@ -15,14 +14,11 @@ class DetectImagePage extends StatefulWidget {
 }
 
 class _DetectImagePageState extends State<DetectImagePage> {
-
   Color myCustomColor = const Color(0xFF00008B);
   Color myTextColor = const Color(0xF6F5F5FF);
 
   bool imageLabelChecking = false;
-
   XFile? imageFile;
-
   String imageLabel = "";
 
   Future<String> getModelPath(String asset) async {
@@ -37,29 +33,22 @@ class _DetectImagePageState extends State<DetectImagePage> {
     return file.path;
   }
 
-  Future<void> getImageLabels(XFile image) async {
-    final labelTflite = await rootBundle.loadString
-      ('assets/ml/labels.txt');
+  Future<void> getImageLabels(XFile? image) async {
+    if (image == null) return;
 
+    final labelTflite = await rootBundle.loadString('assets/ml/labels.txt');
     final labelList = labelTflite.split('\n');
 
-    final modelPath = await getModelPath
-      ('assets/ml/model.tflite');
-
+    final modelPath = await getModelPath('assets/ml/model.tflite');
     final options = LocalLabelerOptions(
       confidenceThreshold: 0.75,
       modelPath: modelPath,
     );
 
     final imageLabeler = ImageLabeler(options: options);
-
-    // Load the image
     final inputImage = InputImage.fromFilePath(image.path);
-
-    // Process the image and get the labels
     final labels = await imageLabeler.processImage(inputImage);
 
-    // Display the labels
     StringBuffer buffer = StringBuffer();
     for (final imgLabel in labels) {
       String lblText = labelList[imgLabel.index];
@@ -69,7 +58,6 @@ class _DetectImagePageState extends State<DetectImagePage> {
       buffer.write((confidence * 100).toStringAsFixed(2));
       buffer.write("%\n");
     }
-    // Close the imageLabeler when done
     imageLabeler.close();
 
     setState(() {
@@ -82,16 +70,18 @@ class _DetectImagePageState extends State<DetectImagePage> {
     try {
       final pickedImage = await ImagePicker().pickImage(source: source);
       if (pickedImage != null) {
-        imageLabelChecking = true;
-        imageFile = pickedImage;
-        setState(() {});
+        setState(() {
+          imageLabelChecking = true;
+          imageFile = pickedImage;
+        });
         getImageLabels(pickedImage);
       }
     } catch (e) {
-      imageLabelChecking = false;
-      imageFile = null;
-      imageLabel = "Error occurred while getting image Label";
-      setState(() {});
+      setState(() {
+        imageLabelChecking = false;
+        imageFile = null;
+        imageLabel = "Error occurred while getting image Label";
+      });
     }
   }
 
@@ -113,15 +103,13 @@ class _DetectImagePageState extends State<DetectImagePage> {
           child: Column(
             children: [
               if (imageLabelChecking) const CircularProgressIndicator(),
-
-              if (!imageLabelChecking && imageFile == null) Container(
-                width: 300,
-                height: 300,
-                color: Colors.indigo[300],
-              ),
-
-              if (imageFile != null) Image.file(File(imageFile!.path),),
-
+              if (!imageLabelChecking && imageFile == null)
+                Container(
+                  width: 300,
+                  height: 300,
+                  color: Colors.indigo[300],
+                ),
+              if (imageFile != null) Image.file(File(imageFile!.path)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -130,15 +118,9 @@ class _DetectImagePageState extends State<DetectImagePage> {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-<<<<<<< HEAD
-                          backgroundColor: Colors.deepOrangeAccent,
-                          elevation: 10,
-                          shape: const StadiumBorder()
-=======
                         backgroundColor: Colors.deepOrangeAccent,
                         elevation: 10,
-                        shape: const StadiumBorder()
->>>>>>> origin/master
+                        shape: const StadiumBorder(),
                       ),
                       child: Row(
                         children: [
@@ -150,63 +132,26 @@ class _DetectImagePageState extends State<DetectImagePage> {
                           Text(
                             "Gallery",
                             style: TextStyle(
-<<<<<<< HEAD
-                                color: myTextColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold
-=======
                               color: myTextColor,
                               fontSize: 16,
-                              fontWeight: FontWeight.bold
->>>>>>> origin/master
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      onPressed: (){
+                      onPressed: () {
                         getImage(ImageSource.gallery);
                       },
                     ),
                   ),
                   Container(
-<<<<<<< HEAD
-                      margin: const EdgeInsets.symmetric(horizontal: 5),
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepOrangeAccent,
-                            elevation: 10,
-                            shape: const StadiumBorder()
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.camera_alt,
-                              size: 30,
-                              color: myTextColor,
-                            ),
-                            Text(
-                              "Camera",
-                              style: TextStyle(
-                                  color: myTextColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold
-                              ),
-                            ),
-                          ],
-                        ),
-                        onPressed: () {
-                          getImage(ImageSource.camera);
-                        },
-                      )
-=======
                     margin: const EdgeInsets.symmetric(horizontal: 5),
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepOrangeAccent,
                         elevation: 10,
-                        shape: const StadiumBorder()
+                        shape: const StadiumBorder(),
                       ),
                       child: Row(
                         children: [
@@ -220,7 +165,7 @@ class _DetectImagePageState extends State<DetectImagePage> {
                             style: TextStyle(
                               color: myTextColor,
                               fontSize: 16,
-                              fontWeight: FontWeight.bold
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
@@ -228,8 +173,7 @@ class _DetectImagePageState extends State<DetectImagePage> {
                       onPressed: () {
                         getImage(ImageSource.camera);
                       },
-                    )
->>>>>>> origin/master
+                    ),
                   ),
                 ],
               ),
