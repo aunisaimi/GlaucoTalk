@@ -130,9 +130,15 @@ class _DetectImagePageState extends State<DetectImagePage> {
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
+<<<<<<< HEAD
                           backgroundColor: Colors.deepOrangeAccent,
                           elevation: 10,
                           shape: const StadiumBorder()
+=======
+                        backgroundColor: Colors.deepOrangeAccent,
+                        elevation: 10,
+                        shape: const StadiumBorder()
+>>>>>>> origin/master
                       ),
                       child: Row(
                         children: [
@@ -144,9 +150,15 @@ class _DetectImagePageState extends State<DetectImagePage> {
                           Text(
                             "Gallery",
                             style: TextStyle(
+<<<<<<< HEAD
                                 color: myTextColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold
+=======
+                              color: myTextColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+>>>>>>> origin/master
                             ),
                           ),
                         ],
@@ -157,6 +169,7 @@ class _DetectImagePageState extends State<DetectImagePage> {
                     ),
                   ),
                   Container(
+<<<<<<< HEAD
                       margin: const EdgeInsets.symmetric(horizontal: 5),
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: ElevatedButton(
@@ -186,6 +199,37 @@ class _DetectImagePageState extends State<DetectImagePage> {
                           getImage(ImageSource.camera);
                         },
                       )
+=======
+                    margin: const EdgeInsets.symmetric(horizontal: 5),
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrangeAccent,
+                        elevation: 10,
+                        shape: const StadiumBorder()
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.camera_alt,
+                            size: 30,
+                            color: myTextColor,
+                          ),
+                          Text(
+                            "Camera",
+                            style: TextStyle(
+                              color: myTextColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold
+                            ),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        getImage(ImageSource.camera);
+                      },
+                    )
+>>>>>>> origin/master
                   ),
                 ],
               ),
