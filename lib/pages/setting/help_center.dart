@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 
 class HelpCenter extends StatefulWidget {
-    const HelpCenter({super.key});
+  const HelpCenter({super.key});
 
   @override
   State<HelpCenter> createState() => _HelpCenterState();
@@ -19,7 +19,7 @@ class _HelpCenterState extends State<HelpCenter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     backgroundColor: myCustomColor,
+      backgroundColor: myCustomColor,
       appBar: AppBar(
         backgroundColor: Colors.black54,
         title: Text(
@@ -45,8 +45,8 @@ class _HelpCenterState extends State<HelpCenter> {
       ),
 
       body: Container(
-      padding: const EdgeInsets.all(18),
-      child:  ListView(
+        padding: const EdgeInsets.all(18),
+        child:  ListView(
           children: [
             const SizedBox(height: 40,),
             Row(
@@ -114,34 +114,34 @@ class _HelpCenterState extends State<HelpCenter> {
     );
   }
 
-    GestureDetector buildFeedbackOption(BuildContext context, String title) {
-      return GestureDetector(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const FeedbackPage()),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                title,
-                style: GoogleFonts.aBeeZee(
-                  textStyle: TextStyle(
-                    fontSize: 20,
-                    color: myTextColor,
-                    fontWeight: FontWeight.bold,
-                  ),),),
-              const Icon(
-                  Icons.arrow_forward_ios,
-                  color: Colors.white)
-            ],
-          ),
+  GestureDetector buildFeedbackOption(BuildContext context, String title) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => const FeedbackPage()),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: GoogleFonts.aBeeZee(
+                textStyle: TextStyle(
+                  fontSize: 20,
+                  color: myTextColor,
+                  fontWeight: FontWeight.bold,
+                ),),),
+            const Icon(
+                Icons.arrow_forward_ios,
+                color: Colors.white)
+          ],
         ),
-      );
+      ),
+    );
   }
 }

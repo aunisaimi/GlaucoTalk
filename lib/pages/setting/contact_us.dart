@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
 
@@ -42,21 +41,20 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: myCustomColor,
       appBar: AppBar(
         title: Text(
-          "Help",
+            "Help",
           style: GoogleFonts.poppins(
             textStyle: TextStyle(
                 color: myTextColor,
                 fontSize: 30,
-                fontWeight: FontWeight.w600
-            ),
-          ),
-        ),
+                fontWeight: FontWeight.w600),
+          ),),
         backgroundColor: Colors.black54,
 
         leading: IconButton(
@@ -64,14 +62,11 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const HelpCenter()
-                )
-            );
+                    builder: (context) => const HelpCenter()));
           },
           icon: const Icon(
             Icons.arrow_back,
-            color: Colors.white,
-          ),
+            color: Colors.white,),
         ),
       ),
       body: SingleChildScrollView(
@@ -85,28 +80,26 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                   textStyle: TextStyle(
                       color: myTextColor,
                       fontSize: 30,
-                      fontWeight: FontWeight.w600
-                  ),
+                      fontWeight: FontWeight.w600),
                 ),
               ),
-        
+
               const SizedBox(height: 20,),
-        
+
               Padding(
                 padding:  const EdgeInsets.symmetric(horizontal: 4.0),
                 child: TextField(
-                  controller: messageController,
                   decoration: InputDecoration(
                     enabledBorder:  OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(10),
                     ),
-        
+
                     focusedBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.white),
                       borderRadius: BorderRadius.circular(10),
                     ),
-        
+
                     hintText: 'Tell us how we can help',
                     helperMaxLines: 5,
                     prefixIcon: const Icon(
@@ -121,16 +114,15 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 90,
                         horizontal: 15
-                    ),
+                   ),
                   ),
                   style: const TextStyle(
-                      color: Colors.white
-                  ),
+                      color: Colors.white), // Text color while typing
                 ),
               ),
-        
+
               const SizedBox(height: 30,),
-        
+
               // send button
               SizedBox(
                 width: 200,
@@ -141,25 +133,24 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     shape: const StadiumBorder()
                   ),
                     child:  const Text(
-                      "SEND",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold
-                      ),
+                        "SEND",
+                    style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold),
                     ),
-                   onPressed: () {
+                   onPressed: (){
                      // add save input to database function
-                     // await saveContactData();
+                    // await saveContactData();
                      print("Hello ${messageController.text}");
-                     if(messageController.text != ""){
+                     if(messageController.text != " "){
                        saveContactData();
-                       // inform the user that the feedback has been sent
+                       // Inform user that the feedback has been sent
                        Navigator.push(
                          context,
                          MaterialPageRoute(
-                           builder: (context) => buildSuccessPage(),
-                         ),
+                           builder: (content) => buildSuccessPage(),
+                        ),
                        );
                      }
                    },

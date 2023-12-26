@@ -222,7 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     radius: 64,
                     backgroundImage: NetworkImage(profilePictureUrl!),
                   )
-                      : CircleAvatar(
+                      : const CircleAvatar(
                     radius: 64,
                     backgroundImage: AssetImage('assets/logo.png'),
                   )),
@@ -247,7 +247,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
               Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
                       color: Color(0xF6F5F5FF),

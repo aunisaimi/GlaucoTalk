@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 class StoryCircle extends StatelessWidget {
+  final String profilePictureUrl;
   final function;
 
   const StoryCircle({
     super.key,
-    this.function});
+    this.function,
+    required this.profilePictureUrl,});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +18,13 @@ class StoryCircle extends StatelessWidget {
       child: Container(
           height: 70,
           width: 70,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.blueGrey
+          border: Border.all(color: Colors.blue, width: 2),
+            image: DecorationImage(
+              image: NetworkImage(profilePictureUrl),
+            fit: BoxFit.cover,
+            )
           ),
         ),
       ),

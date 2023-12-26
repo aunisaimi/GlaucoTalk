@@ -1,14 +1,10 @@
 import 'dart:async';
-import 'package:apptalk/components/story_bars.dart';
-import 'package:apptalk/pages/status/stories/story2.dart';
-import 'package:apptalk/pages/status/stories/story3.dart';
 import 'package:flutter/material.dart';
-
-import 'stories/story1.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:story_view/story_view.dart'; // Corrected import for story_view
 
 class StoryPage extends StatefulWidget {
-  const StoryPage({
-    Key? key}) : super(key: key);
+  const StoryPage({Key? key}) : super(key: key);
 
   @override
   State<StoryPage> createState() => _StoryPageState();
@@ -16,105 +12,81 @@ class StoryPage extends StatefulWidget {
 
 class _StoryPageState extends State<StoryPage> {
   int currentStoryIndex = 0;
-  final List<Widget> myStories = [
-    const MyStory1(), // 0
-    const MyStory2(), // 1
-    const MyStory3(), // 2
-  ];
-
   List<double> percentWatched = [];
+  late Timer _timer;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late Stream<List<QueryDocumentSnapshot>> _storyStream;
+  final StoryController storyController = StoryController(); // Define StoryController for StoryView
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
-
-    // Only add 0.01 as long as it is below 1
-    for (int i = 0; i < myStories.length; i++){
-      percentWatched.add(0);
-    }
-    // If adding 0.01 exceeds 1, set percentage to 1 and cancel timer
+    _storyStream = _firestore.collection('status')
+        .orderBy('timeStamp', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs);
 
     _startWatching();
   }
 
-  void _startWatching(){
-    Timer.periodic(const Duration(milliseconds: 50), (timer){
-      setState(() {
-        // Only add 0.01 as long as it is below 1
-        if (percentWatched[currentStoryIndex] + 0.01 < 1){
-          percentWatched[currentStoryIndex] += 0.01;
-        }
-        // If adding 0.01 exceeds 1, set percentage to 1 and cancel timer
-        else{
-        percentWatched[currentStoryIndex] = 1;
-        timer.cancel();
-
-        // go to the next story as long as there are more stories to go through
-          if(currentStoryIndex < myStories.length - 1){
-            currentStoryIndex++;
-
-            // Restart story timer
-            _startWatching();
-          }
-
-          // If we are finished watching, the last story then return to HomePage
-          else{
-            Navigator.pop(context);
-          }
-        }
-      });
+  void _startWatching() {
+    _timer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
+      // Update percentWatched logic here
     });
   }
 
-  void _onTapDown(TapDownDetails details){
-    final double screenWidth = MediaQuery.of(context).size.width;
-    final double dx = details.globalPosition.dx;
+  @override
+  void dispose() {
+    _timer.cancel();
+    storyController.dispose(); // Dispose StoryController when not in use
+    super.dispose();
+  }
 
-    // user taps on first half of the screen
-    if (dx < screenWidth / 2){
-      setState(() {
-        // as long as this isnt the first story
-        if(currentStoryIndex > 0) {
-          // set previous and current story watched percentage back to 0
-          percentWatched[currentStoryIndex-1] = 0;
-          percentWatched[currentStoryIndex] = 0;
 
-          // go to previous story
-          currentStoryIndex--;
-        }
-      });
-    }
-    // user taps on second half of the screen
-    else{
-      setState(() {
-        // if there are no more stories left
-        if(currentStoryIndex < myStories.length - 1){
-          // finish current story
-          percentWatched[currentStoryIndex] = 1;
-          // move to next  story
-          currentStoryIndex++;
-        }
-        else{
-          percentWatched[currentStoryIndex] =1;
-        }
-      });
-    }
+  void _onTapDown(TapDownDetails details) {
+    // Your existing onTapDown logic
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (details) => _onTapDown(details) ,
-      child:Scaffold(
-        body: Stack(
-          children: [
-            // Story
-            myStories[currentStoryIndex],
-            // Progress bar
-             MyStoryBars(
-               percentWatched: percentWatched,),
-          ],
-        )
+      onTapDown: _onTapDown,
+      child: Scaffold(
+        body: StreamBuilder<List<QueryDocumentSnapshot>>(
+          stream: _storyStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No stories available'));
+            }
+            final stories = snapshot.data!;
+            percentWatched = List.generate(stories.length, (index) => 0);
+
+            // Assuming each document contains multiple StoryItems, we map each document to a list of StoryItem
+            final List<List<StoryItem>> allStories = stories.map((document) {
+              // Create a list of StoryItems for each story
+              // This is a placeholder; you'll need to construct the StoryItems based on your actual data structure
+              return [
+                StoryItem.text(title: document['statusText'] ?? 'No text', backgroundColor: Colors.blue),
+                // Add more StoryItem instances if your story has multiple items
+              ];
+            }).toList();
+
+            return StoryView(
+              storyItems: allStories[currentStoryIndex], // Pass the list of StoryItems for the current story
+              controller: storyController, // Use the StoryController
+              onComplete: () {
+                // Logic to determine what happens when the story is complete
+              },
+              onVerticalSwipeComplete: (direction) {
+                // Logic for vertical swipe action, if needed
+              },
+              // You can add more callbacks and configurations as needed
+            );
+          },
+        ),
       ),
     );
   }

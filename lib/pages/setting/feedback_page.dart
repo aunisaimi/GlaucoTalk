@@ -1,8 +1,10 @@
+import 'package:apptalk/pages/home_page.dart';
 import 'package:apptalk/pages/setting/help_center.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+
 class FeedbackPage extends StatefulWidget {
   const FeedbackPage({super.key});
 
@@ -24,7 +26,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
 
       // Generate a unique document ID for each feedback submission
       final feedbackDocRef =
-        FirebaseFirestore.instance.collection('feedbacks').doc();
+      FirebaseFirestore.instance.collection('feedbacks').doc();
 
       // save the feedback in firestore
       await feedbackDocRef.set({
@@ -49,6 +51,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,13 +59,12 @@ class _FeedbackScreenState extends State<FeedbackPage> {
       appBar: AppBar(
         backgroundColor: Colors.black54,
         title:  Text(
-          "Feedback",
+            "Feedback",
           style: GoogleFonts.poppins(
             textStyle: TextStyle(
                 color: myTextColor,
                 fontSize: 25,
-                fontWeight: FontWeight.w600
-            ),
+                fontWeight: FontWeight.w600),
           ),
         ),
 
@@ -71,8 +73,8 @@ class _FeedbackScreenState extends State<FeedbackPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const HelpCenter()
-                )
+                    builder: (context) => const HelpCenter(),
+                ),
             );
           },
           icon: const Icon(
@@ -80,6 +82,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
             color: Colors.white,),
         ),
       ),
+
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(30.0),
@@ -95,7 +98,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                 ),
               ),
                const SizedBox(height: 10,),
-        
+
                Text(
                 "Are you Satisfied with the Application?",
                 style: GoogleFonts.poppins(
@@ -105,9 +108,9 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                       fontWeight: FontWeight.w500),
                 ),
               ),
-        
+
               const SizedBox(height: 10,),
-        
+
               buildStar(),
               const Divider(
                 color: Colors.white, // Set the color of the divider
@@ -116,10 +119,10 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                 indent: 20.0, // Set the left indentation of the divider
                 endIndent: 20.0, // Set the right indentation of the divider
               ),
-        
+
               const SizedBox(height: 20,),
-        
-              Text(
+
+               Text(
                 "Tell us what can be Improved?",
                   style: GoogleFonts.poppins(
                     textStyle: TextStyle(
@@ -128,21 +131,20 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                         fontWeight: FontWeight.w500),
                   ),
               ),
-        
+
               const SizedBox(height: 20,),
-        
-              Padding(
+
+               Padding(
                 padding:  const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
-                  controller: messageController,
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
-          
+
                     ),
                     focusedBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
-          
+
                     ),
                     hintText: 'Feedback',
                     prefixIcon: const Icon(
@@ -159,7 +161,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                 ),
               ),
 
-              const SizedBox(height: 20,),
+              const SizedBox(height: 30,),
 
               // send button
               SizedBox(
@@ -178,16 +180,16 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                         fontWeight: FontWeight.bold),
                   ),
                   onPressed: (){
-                    if(messageController.text != ""){
-                      saveFeedbackData();
-                      // inform the user that the feedback has been sent
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => buildSuccessPage(),
-                        ),
-                      );
-                    }
+                   if(messageController.text != ""){
+                     saveFeedbackData();
+                     // inform the user that the feedback has been sent
+                     Navigator.push(
+                       context,
+                       MaterialPageRoute(
+                         builder: (context) => buildSuccessPage(),
+                      ),
+                     );
+                   }
                   },
                 ),
               ),
@@ -219,6 +221,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
     );
   }
 
+
   Widget buildSuccessPage() {
     return Scaffold(
       backgroundColor: myCustomColor,
@@ -238,15 +241,15 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                 'Thanks for your feedback!',
                 style: TextStyle(
                   fontSize: 24.0,
-                  color: Color(0xF6F5F5FF),
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: 10.0),
-              const Text(
+               Text(
                 'We appreciate your feedback—it fuels our improvement process.',
                 style: TextStyle(
                   fontSize: 16.0,
-                  color: Color(0xF6F5F5FF),
+                  color: myTextColor,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -267,4 +270,11 @@ class _FeedbackScreenState extends State<FeedbackPage> {
       ),
     );
   }
+
+  // void navigateBackToHelpCenter(){
+  //   Navigator.popUntil(
+  //       context,
+  //           ModalRoute.withName('HelpCenterScreen'),
+  //   );
+  // }
 }
