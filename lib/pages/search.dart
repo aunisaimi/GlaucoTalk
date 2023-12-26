@@ -30,35 +30,6 @@ class _SearchPageState extends State<SearchPage> {
 
   }
 
-
-  // Future<void> searchUsers() async{
-  //   final String nameText = nameController.text;
-  //   final String emailText = emailController.text;
-  //   final String usernameText = usernameController.text;
-  //   late QuerySnapshot userSnapshot;
-  //
-  //   if(usernameText != ""){
-  //     userSnapshot = await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .where('username', isEqualTo: usernameText)
-  //         .get();
-  //   }
-  //   else{
-  //     userSnapshot = await FirebaseFirestore.instance
-  //         .collection('users')
-  //         .where('name', isEqualTo: nameText)
-  //         .where('email', isEqualTo: emailText)
-  //         .get();
-  //   }
-  //
-  //   if(userSnapshot.size > 0){
-  //     setState(() {
-  //       searchSnapshot = userSnapshot;
-  //       hasUserSearched = true;
-  //     });
-  //   }
-  // }
-
   Future<void> searchUsers() async {
     final String nameText = nameController.text;
     final String emailText = emailController.text;
@@ -70,7 +41,8 @@ class _SearchPageState extends State<SearchPage> {
           .collection('users')
           .where('username', isEqualTo: usernameText)
           .get();
-    } else {
+    }
+    else {
       userSnapshot = await FirebaseFirestore.instance
           .collection('users')
           .where('name', isEqualTo: nameText)
@@ -80,20 +52,9 @@ class _SearchPageState extends State<SearchPage> {
 
     if(userSnapshot.size > 0){
       setState(() {
-        // for (QueryDocumentSnapshot document in searchSnapshot!.docs) {
-          //   Map<String, dynamic> userData = document.data() as Map<String, dynamic>;
-          //   print('Name: ${userData['name']}');
-          //   print('Email: ${userData['email']}');
-          //   // Print other fields as needed
-          // }
         searchSnapshot = userSnapshot;
         hasUserSearched = true;
-        print(searchSnapshot!.size);
       });
-    }
-    else{
-      print(searchSnapshot!.size);
-      print("hello");
     }
   }
 
@@ -101,15 +62,18 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.indigo[900],
       appBar: AppBar(
-        title: const Text("Search Page",
-        style: TextStyle(
+        title: const Text(
+          "Search",
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.bold
+              fontSize: 25,
+              fontWeight: FontWeight.w600
           ),
         ),
-        backgroundColor: Colors.indigo[900],
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Colors.black54,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -118,81 +82,103 @@ class _SearchPageState extends State<SearchPage> {
             children: [
               TextField(
                 controller: usernameController,
+                style: const TextStyle(color: Color(0xF6F5F5FF)),
                 decoration: const InputDecoration(
-                    labelText: "Search by Username"
+                  labelText: "Search by Username",
+                  labelStyle: TextStyle(color: Color(0xF6F5F5FF)),
                 ),
               ),
+              const SizedBox(height: 12,),
               ElevatedButton(
                   onPressed: searchUsers,
-                  child: const Text("Search"),
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrangeAccent,
+                      elevation: 10,
+                      shape: const StadiumBorder()
+                  ),
+                  child: const Text(
+                    "Search",
+                    style: TextStyle(
+                        color: Color(0xF6F5F5FF),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
+                    ),
+                  ),
               ),
+              const SizedBox(height: 20.0,),
 
               if(hasUserSearched)
-                Column(
-                  children: <Widget>[
-                    const Text('Search Results:'),
-                    const SizedBox(height: 16.0,),
-                    // // Accessing the data from the first document in the snapshot
-                    // Text('Name: ${searchSnapshot!.docs[0]['name']}'),
-                    // Text('Email: ${searchSnapshot!.docs[0]['email']}'),
+                SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      const Text(
+                        'Search Results:',
+                        style: TextStyle(
+                            color: Color(0xF6F5F5FF),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      const SizedBox(height: 16.0,),
+                  
+                      // Using ListView.builder to display information for each document
+                      ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: searchSnapshot!.docs.length,
+                        itemBuilder: (context, index) {
+                          // Accessing data from each document
+                          Map<String, dynamic> userData =
+                            searchSnapshot!.docs[index].data()
+                            as Map<String, dynamic>;
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage:
+                              userData['profilePictureUrl'] != null &&
+                                  userData['profilePictureUrl'].isNotEmpty ?
+                              NetworkImage(userData['profilePictureUrl']!) :
+                              const AssetImage('assets/logo.png') as
+                              ImageProvider<Object>,
+                              backgroundColor: Colors.grey,
+                            ),
+                            title: Text(
+                              userData['name'] ?? '',
+                              style: const TextStyle(
+                                color: Color(0xF6F5F5FF),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Username: ${userData['username']}',
+                                  style: const TextStyle(
+                                    color: Color(0xF6F5F5FF),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Text(
+                                  'Email: ${userData['email']}',
+                                  style: const TextStyle(
+                                    color: Color(0xF6F5F5FF),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
 
-                    // Using ListView.builder to display information for each document
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: searchSnapshot!.docs.length,
-                      itemBuilder: (context, index) {
-                        // Accessing data from each document
-                        Map<String, dynamic> userData = searchSnapshot!.docs[index].data() as Map<String, dynamic>;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Username: ${userData['username']}'),
-                            Text('Email: ${userData['email']}'),
-
-                            // If you want to display additional fields, add more Text widgets here
-                            // Example: Displaying 'name' field
-                            Text('Name: ${userData['name']}'),
-
-                            // Add more Text widgets as needed
-                          ],
-                        );
-                      },
-                    ),
-
-
-                      // ListView.builder(
-                      //   shrinkWrap: true,
-                      //   itemCount: searchSnapshot!.size,
-                      //   itemBuilder: (context, index) {
-                      //     final userData = searchSnapshot!.docs[index].data()
-                      //       as Map<String, dynamic>;
-                      //
-                      //     return ListTile(
-                      //       leading: CircleAvatar(
-                      //         backgroundImage: NetworkImage(
-                      //             userData['profilePicUrl']
-                      //         ),
-                      //         backgroundColor: Colors.purple[900],
-                      //       ),
-                      //       title: Text(userData['name'] ?? ''),
-                      //       subtitle: Column(
-                      //         crossAxisAlignment: CrossAxisAlignment.start,
-                      //         children: [
-                      //           Text("Name: ${userData['name'] ?? ''}"),
-                      //           Text("Email: ${userData['email'] ?? ''}"),
-                      //         ],
-                      //       ),
-                      //       onTap: (){
-                      //
-                      //       },
-                      //     );
-                      //   },
-                      // ),
+                        },
+                      ),
                     ],
+                  ),
                 ),
               if(!hasUserSearched)
-                const Text('Please perform a search.'),
+                const Text(
+                  'Please perform a search.',
+                  style: TextStyle(color: Color(0xF6F5F5FF)),
+                ),
             ],
           ),
         ),
