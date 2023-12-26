@@ -39,12 +39,12 @@ class _DetectImagePageState extends State<DetectImagePage> {
 
   Future<void> getImageLabels(XFile image) async {
     final labelTflite = await rootBundle.loadString
-      ('assets/ml/labels_mobilenet_quant_v1_224.txt');
+      ('assets/ml/labels.txt');
 
     final labelList = labelTflite.split('\n');
 
     final modelPath = await getModelPath
-      ('assets/ml/mobilenet_v1_1.0_224_quant.tflite');
+      ('assets/ml/model.tflite');
 
     final options = LocalLabelerOptions(
       confidenceThreshold: 0.75,
