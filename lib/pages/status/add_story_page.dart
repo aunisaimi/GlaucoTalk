@@ -52,37 +52,37 @@ class _AddStoryPageState extends State<AddStoryPage> {
         return;
       }
 
-        // proceed with uploading the image first
-        final storageReference = _storage
-            .ref()
-            .child('status_images/${user.uid}_${DateTime.now().millisecondsSinceEpoch}.png');
+      // proceed with uploading the image first
+      final storageReference = _storage
+          .ref()
+          .child('status_images/${user.uid}_${DateTime.now().millisecondsSinceEpoch}.png');
 
-        final uploadTask = storageReference.putFile(File(_pickedImage!.path));
-        final TaskSnapshot uploadSnapshot = await uploadTask;
-        final String imageDownloadUrl = await uploadSnapshot.ref.getDownloadURL();
+      final uploadTask = storageReference.putFile(File(_pickedImage!.path));
+      final TaskSnapshot uploadSnapshot = await uploadTask;
+      final String imageDownloadUrl = await uploadSnapshot.ref.getDownloadURL();
 
-        await FirebaseFirestore.instance.collection('status').add({
-          'userID': user.uid,
-          'statusText': _statusText,
-          'mediaUrl': imageDownloadUrl,
-          'timeStamp': FieldValue.serverTimestamp(),
-        });
+      await FirebaseFirestore.instance.collection('status').add({
+        'userID': user.uid,
+        'statusText': _statusText,
+        'mediaUrl': imageDownloadUrl,
+        'timeStamp': FieldValue.serverTimestamp(),
+      });
 
-        setState(() {
-          _statusText = null;
-          _pickedImage = null;
-        });
+      setState(() {
+        _statusText = null;
+        _pickedImage = null;
+      });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Status uploaded successfully'),
-          ),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Status uploaded successfully'),
+        ),
+      );
 
     } catch (e) {
       print('Error uploading status: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(
+        SnackBar(
           content: Text('Error uploading status: $e'),
         ),
       );

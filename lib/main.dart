@@ -1,7 +1,7 @@
 import 'package:apptalk/firebase/auth_service.dart';
 import 'package:apptalk/firebase/firebase_api.dart';
 import 'package:apptalk/pages/MySplashPage.dart';
-import 'package:apptalk/pages/login.dart';
+import 'package:apptalk/pages/authentication/login.dart';
 import 'package:apptalk/pages/setting/theme/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,7 +43,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(onTap: (){}),
+      home: MySplashPage(),
       theme: Provider.of<ThemeProvider>(context).themeData,
     );
   }

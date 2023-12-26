@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class DisplayPictureScreen extends StatelessWidget {
@@ -19,11 +17,6 @@ class DisplayPictureScreen extends StatelessWidget {
       // The Image is stored as a file on the device. use the 'Image.file'
       // constructor with the given path to display the image
       body: Image.file(File(imagePath)),
-      /*body: Center(
-        child: Image.network(
-            imageUrl,
-            fit: BoxFit.contain),
-      ),*/
     );
   }
 }

@@ -36,31 +36,31 @@ class _ViewStoriesPageState extends State<ViewStoriesPage> {
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty){
             return const Center(
-            child: Text('No Stories available'),
+              child: Text('No Stories available'),
             );
           }
 
           return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot story = snapshot.data!.docs[index];
-                Map<String, dynamic> data
-                  = story.data() as Map<String, dynamic>;
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              DocumentSnapshot story = snapshot.data!.docs[index];
+              Map<String, dynamic> data
+              = story.data() as Map<String, dynamic>;
 
-                return ListTile(
-                  leading: data['mediaUrl'] != null
-                      ? Image.network(data['mediaUrl'],
-                      width: 50,
-                      height: 50,
-                      fit: BoxFit.cover)
-                      : const SizedBox(
-                        width: 50,
-                        height: 50, //place holder in case of no image
-                  ),
-                  title: Text(data['statusText'] ?? 'No status text'),
-                  subtitle: Text('Posted by ${data['userID'] ?? 'Unknown'}'),
-                );
-              },
+              return ListTile(
+                leading: data['mediaUrl'] != null
+                    ? Image.network(data['mediaUrl'],
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover)
+                    : const SizedBox(
+                  width: 50,
+                  height: 50, //place holder in case of no image
+                ),
+                title: Text(data['statusText'] ?? 'No status text'),
+                subtitle: Text('Posted by ${data['userID'] ?? 'Unknown'}'),
+              );
+            },
           );
         },
       ),

@@ -47,7 +47,9 @@ class _StatusPageState extends State<StatusPage> {
       // get the current signed in user
       final user = _auth.currentUser;
       if (user != null){
-        final profilePictureRef = _storage.ref().child('profile_pictures/${user.uid}.png');
+        final profilePictureRef = _storage
+            .ref()
+            .child('profile_pictures/${user.uid}.png');
 
         // get the download URL for the profile picture
         final downloadUrl = await profilePictureRef.getDownloadURL();
@@ -74,74 +76,6 @@ class _StatusPageState extends State<StatusPage> {
       print('Error picking image: $e');
     }
   }
-
-  // Future<void> _uploadStatus() async{
-  //   try{
-  //     // get the current user ID
-  //     final userId = FirebaseAuth.instance.currentUser!.uid;
-  //
-  //     // Generate a unique document for each uploaded status
-  //     final statusDocRef =
-  //     FirebaseFirestore.instance.collection('status').doc();
-  //
-  //     // save the uploaded statuses in the firestore
-  //     await statusDocRef.set({
-  //       'userID': userId,
-  //       'mediaUrl': _mediaUrl,
-  //       'statusText': _statusText,
-  //       'timeStamp': Timestamp.now(),
-  //     });
-  //
-  //     // inform the user that the status has been uploaded
-  //     ScaffoldMessenger.of(context)
-  //         .showSnackBar(
-  //       const SnackBar(
-  //         content: Text(
-  //             'Status Uploaded'),
-  //       ),
-  //     );
-  //
-  //     // clear status and media after upload
-  //     setState(() {
-  //       _statusText = " ";
-  //       _mediaUrl = " ";
-  //     });
-  //
-  //   }
-  //   catch (e){
-  //     print('Error in uploading status: $e');
-  //   }
-  // }
-
-  // Future<void> _addStory(String content, File mediaFile) async {
-  //   try {
-  //     final User? user = _auth.currentUser;
-  //     if (user != null) {
-  //       final storyMediaFile = File(mediaFile.path);
-  //
-  //       // Upload storyMediaFile to storage
-  //       final storageReference = FirebaseStorage.instance.ref().child('stories/${user.uid}_${DateTime.now().millisecondsSinceEpoch}.png');
-  //       final uploadTask = storageReference.putFile(storyMediaFile);
-  //       final TaskSnapshot uploadSnapshot = await uploadTask.whenComplete(() => {});
-  //
-  //       // Get the download URL of the uploaded media
-  //       final downloadUrl = await uploadSnapshot.ref.getDownloadURL();
-  //
-  //       // Create a new story document in Firestore with user's ID, content, media URL, and timestamp
-  //       await FirebaseFirestore.instance.collection('stories').add({
-  //         'userId': user.uid,
-  //         'content': content,
-  //         'mediaUrl': downloadUrl,
-  //         'timestamp': Timestamp.now(),
-  //       });
-  //
-  //       // Navigate back to the previous screen or perform any other desired actions
-  //       Navigator.pop(context);
-  //     }
-  //   } catch (e) {
-  //     print('Error adding story: $e');
-  //   }
-  // }
 
   void _openStory(){
     Navigator.push(

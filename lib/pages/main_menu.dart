@@ -1,4 +1,4 @@
-import 'package:apptalk/pages/login.dart';
+import 'package:apptalk/pages/authentication/login.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

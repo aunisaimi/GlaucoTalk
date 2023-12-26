@@ -233,7 +233,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       onPressed: () {
                         pickImage(ImageSource.gallery);
                       },
-                      icon: const Icon(Icons.add_a_photo),
+                      icon: const Icon(Icons.add_a_photo,
+                      color: Colors.white70,),
                     ),
                   ),
                 ],
