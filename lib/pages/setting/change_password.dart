@@ -1,4 +1,5 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,9 +32,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       if (user != null) {
         try {
           AuthCredential credential =
-          EmailAuthProvider.credential(email: user.email!, password: oldPassword);
+            EmailAuthProvider.credential(
+              email: user.email!, password: oldPassword);
+
           await user.reauthenticateWithCredential(credential);
           await user.updatePassword(newPassword);
+
+          // Update the password field in Firestore
+          FirebaseFirestore.instance
+              .collection('users') // Replace with your Firestore collection name
+              .doc(user.uid) // Assuming each document is identified by the user's UID
+              .update({'password': newPassword});
 
           _showSnackBar('Password changed successfully.');
 
