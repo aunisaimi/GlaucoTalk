@@ -200,10 +200,10 @@ class _HomePageState extends State<HomePage> {
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colors.black54,
           title: Text(
-            'C H A T',
-            style: GoogleFonts.aBeeZee(
+            'C H A T ',
+            style: GoogleFonts.poppins(
               textStyle: const TextStyle(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w900,
                 fontSize: 24,
                 color: Colors.yellow,
               ),
@@ -222,27 +222,27 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               icon: const Icon(Icons.search,
-                size: 24,
+                size: 27,
                 color: Colors.white,
 
               ),
             ),
 
-            IconButton(
-              onPressed: () {
-                navigateToTakePictureScreen(context, firstCamera!);
-              },
-              icon: const Icon(
-                Icons.camera_alt,
-                color: Colors.white,),
-            ),
+            // IconButton(
+            //   onPressed: () {
+            //     navigateToTakePictureScreen(context, firstCamera!);
+            //   },
+            //   icon: const Icon(
+            //     Icons.camera_alt,
+            //     color: Colors.white,),
+            // ),
           ],
 
           bottom: const TabBar(
             labelColor: Colors.orange,
             labelStyle: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 14),// Color for the selected tab's text
+                fontSize: 20),// Color for the selected tab's text
             unselectedLabelColor: Colors.white,
             splashFactory: NoSplash.splashFactory,// Color for unselected tabs' text
             tabs: [
@@ -579,36 +579,51 @@ class _HomePageState extends State<HomePage> {
   //build individual user list items
   Widget _buildUserListItem(DocumentSnapshot document){
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
-    // check if the current user's email matches the user's email in Firestore
     bool isCurrentUser = _auth.currentUser!.email == data['name'];
 
-    // display all users except current user
     if(_auth.currentUser!.email != data['name']){
-      return ListTile(
-        title: Text(
-          data['name'],
-          style: TextStyle(
-              color: isCurrentUser ? Colors.deepOrange : myTextColor, // You can use a different color for signed-in users
-              fontSize: isCurrentUser ? 25.0 : 20.0, // adjust font here
-          ),
+      return Dismissible(
+        key: Key(document.id), // Unique key for Dismissible
+        background: Container(
+          color: Colors.red,
+          alignment: Alignment.centerRight,
+          padding: const EdgeInsets.only(right: 20.0),
+          child: const Icon(
+              Icons.delete,
+              color: Colors.white),
         ),
-        onTap: (){
-          // pass the clicked user's UID to the chat page
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ChatPage(
-              receiverName: data['name'] ?? '',
-              receiverUserID: data['uid'] ?? '',
-              senderprofilePicUrl: data['profilePicUrl'] ?? '',
-            ),
-            ),
-          );
+        direction: DismissDirection.endToStart,
+        onDismissed: (direction) {
+          // Add your logic to delete the item from Firestore
+          FirebaseFirestore.instance
+              .collection('users')
+              .doc(document.id)
+              .delete();
         },
+        child: ListTile(
+          title: Text(
+            data['name'],
+            style: TextStyle(
+              color: isCurrentUser
+                  ? Colors.deepOrange : myTextColor,
+              fontSize: isCurrentUser ? 25.0 : 20.0,
+            ),
+          ),
+          onTap: (){
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ChatPage(
+                receiverName: data['name'] ?? '',
+                receiverUserID: data['uid'] ?? '',
+                senderprofilePicUrl: data['profilePicUrl'] ?? '',
+              )),
+            );
+          },
+        ),
       );
-    } else{
-      // Return empty container
+    } else {
       return Container();
     }
   }
+
 }

@@ -1,5 +1,14 @@
+import 'dart:io';
+
+import 'package:apptalk/camera/camera.dart';
+import 'package:apptalk/pages/home_page.dart';
+import 'package:apptalk/pages/setting/Notification%20page/home.dart';
+import 'package:apptalk/pages/status/statuspage.dart';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ViewStoriesPage extends StatefulWidget {
   const ViewStoriesPage({super.key});
@@ -10,6 +19,9 @@ class ViewStoriesPage extends StatefulWidget {
 
 class _ViewStoriesPageState extends State<ViewStoriesPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late CameraDescription? firstCamera;
+  Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
 
   Stream<QuerySnapshot> get _storiesStream {
     return _firestore
@@ -18,12 +30,35 @@ class _ViewStoriesPageState extends State<ViewStoriesPage> {
         .snapshots();
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: myCustomColor,
       appBar: AppBar(
-        title: const Text(
-            'View Stories'),
+        backgroundColor: Colors.black54,
+        title: Text(
+            'View Stories',
+          style: GoogleFonts.poppins(
+            textStyle: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: 24,
+              color: Colors.yellow,
+            ),
+          ),
+        ),
+        leading: IconButton(
+          onPressed: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => HomePage()));
+          },
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _storiesStream,
@@ -50,15 +85,26 @@ class _ViewStoriesPageState extends State<ViewStoriesPage> {
               return ListTile(
                 leading: data['mediaUrl'] != null
                     ? Image.network(data['mediaUrl'],
-                    width: 50,
-                    height: 50,
+                    width: 60,
+                    height: 60,
                     fit: BoxFit.cover)
                     : const SizedBox(
-                  width: 50,
-                  height: 50, //place holder in case of no image
+                  width: 60,
+                  height: 60, //place holder in case of no image
                 ),
-                title: Text(data['statusText'] ?? 'No status text'),
-                subtitle: Text('Posted by ${data['userID'] ?? 'Unknown'}'),
+                title: Text(
+                    data['statusText'] ?? 'No status text',
+                style: const TextStyle(
+                    color: Colors.deepOrange,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold),
+                ),
+                subtitle: Text(
+                    'Posted by ${data['userID'] ?? 'Unknown'}',
+                  style: TextStyle(
+                      color: myTextColor,
+                      fontSize: 16),
+                ),
               );
             },
           );

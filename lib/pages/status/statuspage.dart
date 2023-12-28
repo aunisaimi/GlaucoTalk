@@ -90,6 +90,7 @@ class _StatusPageState extends State<StatusPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: myCustomColor,
       body: Column(
         children: [
           SizedBox(
@@ -108,9 +109,10 @@ class _StatusPageState extends State<StatusPage> {
               },
             ),
           ),
+
+          const SizedBox(height: 18,),
+
           ElevatedButton(
-            child: const Text('View Stories',
-            style: TextStyle(fontSize: 28)),
             onPressed: () {
               Navigator.push(
                 context,
@@ -118,10 +120,21 @@ class _StatusPageState extends State<StatusPage> {
                     builder: (context) => const ViewStoriesPage()),
               );
             },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.deepOrange[600], // Set the background color to deep orange
+              shape: const StadiumBorder(), // Set the shape to stadium border
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Optional: adjust the padding
+            ),
+            child: Text(
+                'View Stories',
+            style: TextStyle(
+                fontSize: 28,
+                color: myTextColor)),
           ),
+
+          const SizedBox(height: 18,),
+
           ElevatedButton(
-            child: const Text('View Story Page',
-                style: TextStyle(fontSize: 28)),
             onPressed: () {
               Navigator.push(
                 context,
@@ -129,6 +142,17 @@ class _StatusPageState extends State<StatusPage> {
                     builder: (context) => const StoryPage()),
               );
             },
+            style: ElevatedButton.styleFrom(
+              primary: Colors.deepOrange[600], // Set the background color to deep orange
+              shape: const StadiumBorder(), // Set the shape to stadium border
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), // Optional: adjust the padding
+            ),
+            child: Text(
+                'View Story Page',
+                style: TextStyle(
+                    fontSize: 28,
+                    color: myTextColor),
+            ),
           ),
         ],
       ),
@@ -140,7 +164,11 @@ class _StatusPageState extends State<StatusPage> {
                 builder: (context) => const AddStoryPage()),
           );
         },
-        child: const Icon(Icons.add),
+        backgroundColor: Colors.deepOrange[700],
+        child: const Icon(
+            Icons.add,
+          color: Colors.white,
+          size: 35,),
       ),
     );
   }

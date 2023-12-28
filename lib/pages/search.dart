@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -14,6 +15,8 @@ class _SearchPageState extends State<SearchPage> {
   TextEditingController usernameController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  Color myCustomColor = const Color(0xFF00008B);
+  Color myTextColor = const Color(0xF6F5F5FF);
 
   bool isLoading = false;
   QuerySnapshot? searchSnapshot;
@@ -111,12 +114,14 @@ class _SearchPageState extends State<SearchPage> {
                 SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      const Text(
+                       Text(
                         'Search Results:',
-                        style: TextStyle(
-                            color: Color(0xF6F5F5FF),
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold
+                        style: GoogleFonts.aBeeZee(
+                          textStyle: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24,
+                            color: myTextColor,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 16.0,),
@@ -168,7 +173,6 @@ class _SearchPageState extends State<SearchPage> {
                               ],
                             ),
                           );
-
                         },
                       ),
                     ],
