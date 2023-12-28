@@ -16,8 +16,8 @@ class StoryCircle extends StatelessWidget {
      child: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-          height: 70,
-          width: 70,
+          height: 80,
+          width: 80,
           decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(color: Colors.blue, width: 2),

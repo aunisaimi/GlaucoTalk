@@ -66,7 +66,8 @@ class _StatusPageState extends State<StatusPage> {
   Future<void> pickImage() async {
     try{
       final pickedFile =
-      await imagePicker.pickImage(source: ImageSource.gallery);
+      await imagePicker.pickImage(
+          source: ImageSource.gallery);
       if(pickedFile != null){
         setState(() {
           pickedImage = pickedFile as PickedFile?;
@@ -94,7 +95,7 @@ class _StatusPageState extends State<StatusPage> {
           SizedBox(
             height: 80,
             child: ListView.builder(
-              itemCount: 10, // Replace with actual count
+              itemCount: 6, // Replace with actual count
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
                 return GestureDetector(
@@ -108,20 +109,24 @@ class _StatusPageState extends State<StatusPage> {
             ),
           ),
           ElevatedButton(
-            child: const Text('View Stories'),
+            child: const Text('View Stories',
+            style: TextStyle(fontSize: 28)),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const ViewStoriesPage()),
+                MaterialPageRoute(
+                    builder: (context) => const ViewStoriesPage()),
               );
             },
           ),
           ElevatedButton(
-            child: const Text('View Story Page'),
+            child: const Text('View Story Page',
+                style: TextStyle(fontSize: 28)),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const StoryPage()),
+                MaterialPageRoute(
+                    builder: (context) => const StoryPage()),
               );
             },
           ),
@@ -131,7 +136,8 @@ class _StatusPageState extends State<StatusPage> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddStoryPage()),
+            MaterialPageRoute(
+                builder: (context) => const AddStoryPage()),
           );
         },
         child: const Icon(Icons.add),

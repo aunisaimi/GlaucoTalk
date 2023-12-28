@@ -32,30 +32,6 @@ class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  /*
-  Future<void> saveUser(User user, String email, String password) async{
-    // show loading circle
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-    try{
-      // Get a reference to the Firestore collection
-      CollectionReference usersCollection = FirebaseFirestore.instance.collection('users');
-      // Create a document with the user's UID as the document ID
-      await usersCollection.doc(user.uid).set({
-        'email': email,
-        'password': password,
-        // Add other user details as needed
-      });
-    } catch (e) {
-      print('Error saving user to Firestore: $e');
-   */
-
   // user login method
   void userLogin() async {
     // show loading circle

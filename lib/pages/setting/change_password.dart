@@ -1,9 +1,7 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({Key? key}) : super(key: key);
@@ -15,47 +13,62 @@ class ChangePasswordScreen extends StatefulWidget {
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Color myCustomColor = const Color(0xFF00008B);
   Color myTextColor = const Color(0xF6F5F5FF);
-
+  bool isPasswordVisible = false;
   final _formKey = GlobalKey<FormState>();
+  String? passwordError;
 
   final TextEditingController _currentPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
+  bool _validatePassword(String password) {
+    if (password.isEmpty) {
+      _showSnackBar('Password is required.');
+      return false;
+    }
+    if (password.length < 8) {
+      _showSnackBar('Password must be at least 8 characters long.');
+      return false;
+    }
+    // Add more password validation rules as needed
+    return true;
+  }
+
   void _changePassword() async {
     String oldPassword = _currentPasswordController.text;
     String newPassword = _newPasswordController.text;
 
-    if (_formKey.currentState!.validate()) {
-      User? user = FirebaseAuth.instance.currentUser;
+    if (!_formKey.currentState!.validate() || !_validatePassword(newPassword)) {
+      return;
+    }
 
-      if (user != null) {
-        try {
-          AuthCredential credential =
-            EmailAuthProvider.credential(
-              email: user.email!, password: oldPassword);
+    User? user = FirebaseAuth.instance.currentUser;
 
-          await user.reauthenticateWithCredential(credential);
-          await user.updatePassword(newPassword);
+    if (user != null) {
+      try {
+        AuthCredential credential =
+        EmailAuthProvider.credential(email: user.email!, password: oldPassword);
 
-          // Update the password field in Firestore
-          FirebaseFirestore.instance
-              .collection('users') // Replace with your Firestore collection name
-              .doc(user.uid) // Assuming each document is identified by the user's UID
-              .update({'password': newPassword});
+        await user.reauthenticateWithCredential(credential);
+        await user.updatePassword(newPassword);
 
-          _showSnackBar('Password changed successfully.');
+        // Update the password field in Firestore
+        FirebaseFirestore.instance
+            .collection('users') // Replace with your Firestore collection name
+            .doc(user.uid) // Assuming each document is identified by the user's UID
+            .update({'password': newPassword});
 
-          _currentPasswordController.clear();
-          _newPasswordController.clear();
-          _confirmPasswordController.clear();
+        _showSnackBar('Password changed successfully.');
 
-          // Navigate to home page after successful password change
-          Navigator.pop(context); // Remove current screen from navigation stack
-        } catch (e) {
-          _showSnackBar('Error changing password. Please try again.');
-          print('Error: $e');
-        }
+        _currentPasswordController.clear();
+        _newPasswordController.clear();
+        _confirmPasswordController.clear();
+
+        // Navigate to home page after successful password change
+        Navigator.pop(context); // Remove the current screen from the navigation stack
+      } catch (e) {
+        _showSnackBar('Error changing password. Please try again.');
+        print('Error: $e');
       }
     }
   }
@@ -136,10 +149,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       TextFormField(
                         controller: _currentPasswordController,
                         maxLines: 1,
-                        obscureText: true,
+                        obscureText: !isPasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Your Current password',
                           hintStyle: const TextStyle(color: Color(0xFF6f6f6f)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.black,
+                            ),
+                            onPressed: (){
+                              setState(() {
+                                isPasswordVisible = !isPasswordVisible;
+                              });
+                            },
+                          ),
                           counterText: '',
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
@@ -155,6 +179,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           fillColor: Colors.white,
                           filled: true,
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your current password.';
+                          }
+                          return null;
+                        },
                       )
                     ],
                   ),
@@ -175,10 +205,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       TextFormField(
                         controller: _newPasswordController,
                         maxLines: 1,
-                        obscureText: true,
+                        obscureText: !isPasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Your New Password',
                           hintStyle: const TextStyle(color: Color(0xFF6f6f6f)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.black,
+                            ),
+                            onPressed: (){
+                              setState(() {
+                                isPasswordVisible = !isPasswordVisible;
+                              });
+                            },
+                          ),
                           counterText: '',
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
@@ -194,6 +235,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           fillColor: Colors.white,
                           filled: true,
                         ),
+                        validator: (value) {
+                          if (!_validatePassword(value ?? '')) {
+                            return 'Password must be at least 8 characters long.';
+                          }
+                          return null;
+                        },
                       )
                     ],
                   ),
@@ -214,10 +261,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       TextFormField(
                         controller: _confirmPasswordController,
                         maxLines: 1,
-                        obscureText: true,
+                        obscureText: !isPasswordVisible,
                         decoration: InputDecoration(
                           hintText: 'Re-type new password',
                           hintStyle: const TextStyle(color: Color(0xFF6f6f6f)),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              color: Colors.black,
+                            ),
+                            onPressed: (){
+                              setState(() {
+                                isPasswordVisible = !isPasswordVisible;
+                              });
+                            },
+                          ),
                           counterText: '',
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15.0),
@@ -233,6 +291,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           fillColor: Colors.white,
                           filled: true,
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please re-type your new password.';
+                          }
+                          if (value != _newPasswordController.text) {
+                            return 'Passwords do not match.';
+                          }
+                          return null;
+                        },
                       )
                     ],
                   ),
@@ -255,9 +322,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           ),
                         ),
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _changePassword();
-                          }
+                          _changePassword();
                         },
                       ),
                     ),

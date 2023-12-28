@@ -1,4 +1,6 @@
 import 'dart:async' show Timer;
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:apptalk/camera/camera.dart';
 import 'package:apptalk/firebase/auth_service.dart';
@@ -16,6 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:apptalk/pages/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:image/image.dart' as img;
 
 import 'label_image/detect.dart';
 
@@ -63,21 +67,49 @@ class _HomePageState extends State<HomePage> {
 
   get floatingActionButton => null;
 
+  // Function to save the snapped picture to local storage
+  Future<void> savePictureToStorage (XFile? imageFile) async {
+    if (imageFile == null) {
+      return;
+      // handle the case if no image to save
+    }
+
+    final appDir = await getApplicationDocumentsDirectory();
+    final filePath = '${appDir.path}/snapped_image.jpg';
+
+    final rawImage = File(imageFile.path).readAsBytesSync();
+    final image = img.decodeImage(Uint8List.fromList(rawImage));
+
+    if (image != null){
+      final savedFile = File(filePath);
+      savedFile.writeAsBytesSync(img.encodeJpg(image));
+      print('Image saved to $filePath');
+    } else {
+      print ('Failed to process the image');
+    }
+  }
+
   // void updateUserPresence() {
   //   ref.read(authControllerProvider).updateUserPresence();
   // }
 
   //Function to navigate to TakePictureScreen
+
   void navigateToTakePictureScreen(
       BuildContext context, CameraDescription camera){
-
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => TakePictureScreen(camera: camera)
+          builder: (context) => TakePictureScreen(
+              camera: camera,
+            onSavePicture: (XFile? image) async {
+              if (image != null) {
+                await savePictureToStorage(image);
+              }
+            }
+          ),
       ),
     );
-
   }
 
   @override
@@ -517,7 +549,6 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(height: 8,),
-
             ],
           ),
         ),
@@ -549,12 +580,19 @@ class _HomePageState extends State<HomePage> {
   Widget _buildUserListItem(DocumentSnapshot document){
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
 
+    // check if the current user's email matches the user's email in Firestore
+    bool isCurrentUser = _auth.currentUser!.email == data['name'];
+
     // display all users except current user
     if(_auth.currentUser!.email != data['name']){
       return ListTile(
         title: Text(
           data['name'],
-          style: TextStyle(color: myTextColor),),
+          style: TextStyle(
+              color: isCurrentUser ? Colors.deepOrange : myTextColor, // You can use a different color for signed-in users
+              fontSize: isCurrentUser ? 25.0 : 20.0, // adjust font here
+          ),
+        ),
         onTap: (){
           // pass the clicked user's UID to the chat page
           Navigator.push(
