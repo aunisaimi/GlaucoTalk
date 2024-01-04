@@ -48,7 +48,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       backgroundColor: myCustomColor,
       appBar: AppBar(
         title: Text(
-            "Help",
+          "Help",
           style: GoogleFonts.poppins(
             textStyle: TextStyle(
                 color: myTextColor,
@@ -74,7 +74,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-               Text(
+              Text(
                 "Contact Us",
                 style: GoogleFonts.poppins(
                   textStyle: TextStyle(
@@ -89,6 +89,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               Padding(
                 padding:  const EdgeInsets.symmetric(horizontal: 4.0),
                 child: TextField(
+                  controller: messageController,
                   decoration: InputDecoration(
                     enabledBorder:  OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.white),
@@ -114,7 +115,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 90,
                         horizontal: 15
-                   ),
+                    ),
                   ),
                   style: const TextStyle(
                       color: Colors.white), // Text color while typing
@@ -126,35 +127,34 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
               // send button
               SizedBox(
                 width: 200,
-                 child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange[700],
-                    elevation: 10,
-                    shape: const StadiumBorder()
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrange[700],
+                      elevation: 10,
+                      shape: const StadiumBorder()
                   ),
-                    child:  const Text(
-                        "SEND",
+                  child:  const Text(
+                    "SEND",
                     style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold),
-                    ),
-                   onPressed: (){
-                     // add save input to database function
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: (){
+                    // add save input to database function
                     // await saveContactData();
-                     print("Hello ${messageController.text}");
-                     if(messageController.text != " "){
-                       saveContactData();
-                       // Inform user that the feedback has been sent
-                       Navigator.push(
-                         context,
-                         MaterialPageRoute(
-                           builder: (content) => buildSuccessPage(),
+                    if(messageController.text.trim().isNotEmpty){
+                      saveContactData();
+                      // Inform user that the feedback has been sent
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (content) => buildSuccessPage(),
                         ),
-                       );
-                     }
-                   },
-                 ),
+                      );
+                    }
+                  },
+                ),
               ),
             ],
           ),

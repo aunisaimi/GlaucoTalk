@@ -17,10 +17,14 @@ class ChatPage extends StatefulWidget {
     required this.senderprofilePicUrl});
 
   @override
-  State<ChatPage> createState() => _ChatPageState();
+  State<ChatPage> createState() => _ChatPageState(receiverUserID: receiverUserID);
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final String receiverUserID;
+
+  _ChatPageState({required this.receiverUserID});
+
   final TextEditingController _messageController = TextEditingController();
   final ChatService _chatService = ChatService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -31,13 +35,15 @@ class _ChatPageState extends State<ChatPage> {
       // String profilePicUrl = "lib/images/winter.jpg"; // fetch current user's profile pic
 
       await _chatService.sendMessage(
-        widget.receiverUserID,
+        receiverUserID,
         _messageController.text,
         widget.receiverName,
         //widget.senderprofilePicUrl,
         //"",
 
       );
+
+      print(widget.receiverUserID);
       // clear the text controller after sending the message
       _messageController.clear();
     }
@@ -89,50 +95,6 @@ class _ChatPageState extends State<ChatPage> {
         );
       },);
   }
-
-  /*
-  // build message item
-  Widget _buildMessageItem(DocumentSnapshot document){
-    Map<String, dynamic> data = document.data() as Map<String, dynamic>;
-
-    // align the message to the right if sender is the current user
-    // otherwise to the left
-    var alignment = (data['senderId'] == _firebaseAuth.currentUser!.uid)
-        ? Alignment.centerRight
-        : Alignment.centerLeft;
-
-    return Row(
-      mainAxisAlignment: (data['senderId'] == _firebaseAuth.currentUser!.uid)
-      ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        //only show profile picture of other users
-        if(data['senderId'] != _firebaseAuth.currentUser!.uid)
-          CircleAvatar(
-            backgroundImage: NetworkImage(data['profilePicUrl']),
-            radius: 20,
-          ),
-          Container(
-            alignment: alignment,
-              child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: (data['senderId'] ==
-                  _firebaseAuth.currentUser!.uid)
-                  ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                mainAxisAlignment: (data['senderId'] ==
-                  _firebaseAuth.currentUser!.uid)
-                   ? MainAxisAlignment.end : MainAxisAlignment.start,
-               children: [
-                     Text(data['senderEmail']),
-                    const SizedBox(height:5),
-                    ChatBubble(message: data['message']),
-                  ],
-               ),
-            ),
-        ),
-      ],
-    );
-  } */
 
   Widget _buildMessageItem(DocumentSnapshot document) {
     Map<String, dynamic> data = document.data() as Map<String, dynamic>;

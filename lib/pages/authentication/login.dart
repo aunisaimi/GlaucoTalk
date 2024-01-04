@@ -2,6 +2,7 @@ import 'package:apptalk/pages/password/forgot_password.dart';
 import 'package:apptalk/pages/home_page.dart';
 import 'package:apptalk/pages/main_menu.dart';
 import 'package:apptalk/pages/authentication/register.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -48,60 +49,87 @@ class _LoginPageState extends State<LoginPage> {
 
     // try login
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text,
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+        email: emailController.text.trim(),
         password: passwordController.text,
       );
-      // pop loading circle before user logged in
-      Navigator.pop(context);
 
-      // Saving data to shared preferences after successful login
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString('email', emailController.text);
+      // Fetch user role from Firestore
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
+      // Check if the user has the correct role
+      if (userDoc.exists &&
+          userDoc['role'] == 'user') { // Replace 'user' with your specific role
+        // Proceed with login
+        // Saving data to shared preferences after successful login
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        await prefs.setString('email', emailController.text.trim());
 
 
+        // pop loading circle before user logged in
+        Navigator.pop(context);
+
+        // Navigate to HomePage
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        Navigator.pop(context);
+        showErrorMessage(
+            'You do not have the necessary permissions to log in as a user.');
+        return;
+      }
+    } catch(e){
+      Navigator.of(context).pop();
+
+      if( e is FirebaseAuthException){
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Firebase Auth Error: ${e.message}"),
+          ),
+        );
+      } else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+            Text("General Error: ${e.toString()}"),
+          ),
+        );
+      }
+    }
       // Navigate to HomePage after successfully login
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (context) =>  HomePage(),
         ),
-      );
-    }
-    catch (e) {
-      // Dismiss the loading dialog in case of an error
-      Navigator.pop(context);
-
-      if (e is FirebaseAuthException) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("Firebase Auth Error: ${e.message}"),
-          ),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text("General Error: ${e.toString()}"),
-          ),
-        );
+       );
       }
-    }
-  }
 
   // show error message to user
-  void showErrorMessage() {
+  void showErrorMessage(String message) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           backgroundColor: Colors.indigo,
-          title:  Text('Login Failed',
-            style: TextStyle(color: myTextColor),),
-          content:  Text('Invalid username or password',
-            style: TextStyle(color: myTextColor),),
+          title:  Text(
+            'Login Failed',
+            style: TextStyle(
+                color: myTextColor),),
+          content:  Text(
+            message,
+            style: TextStyle(
+                color: myTextColor),),
           actions: [
             TextButton(
-              child: const Text('OK',
+              child: const Text(
+                  'OK',
                   style: TextStyle(color: Colors.white)),
               onPressed: () {
                 Navigator.pop(context);
@@ -147,8 +175,8 @@ class _LoginPageState extends State<LoginPage> {
                 //const SizedBox(height: 50),
                 // logo
                 Image.asset("assets/logo.png",
-                  width: 200,
-                  height: 200,),
+                  width: 300,
+                  height: 300,),
                 //const SizedBox(height:2),
 
                 // text under the lock icon
@@ -291,74 +319,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
 
                 const SizedBox(height: 15),
-
-                /*
-                // other login method
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                  child: Row(
-                    children: [
-                      const Expanded(
-                        child: Divider(
-                          thickness: 1.5,
-                          color: Colors.deepOrange,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(
-                          'Or continue with',
-                          style: TextStyle(color: Color(0xF6F5F5FF),
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                      ),
-
-                      Expanded(
-                        child: Divider(
-                          thickness: 1.5,
-                          color: Colors.deepOrange[400],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 15),
-
-                // google + fb login buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // google button
-                    SquareTile(
-                        onTap: () async{
-                          final user = await AuthService().signInWithGoogle();
-                          if (user != null && mounted){
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (_) => HomePage()));
-                          }
-                          else{
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Error signing in with Google'),
-                              ),
-                            );
-                          }
-                        },
-                        imagePath: 'lib/images/google.png'),
-
-
-
-                    const SizedBox(width: 10.0),
-
-                    // facebook button
-                    SquareTile(
-                        onTap: (){},
-                        imagePath: 'lib/images/facebook.png'),
-
-                  ],
-                ),
-                */
                 const SizedBox(height: 25),
 
                 // doesn't have an account

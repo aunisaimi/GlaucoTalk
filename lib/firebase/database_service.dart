@@ -19,7 +19,8 @@ class DatabaseService{
       String email,
       String password,
       String username,
-      DateTime birthday) async{
+      DateTime birthday,
+      String role) async{
 
     return await userCollection.doc(uid).set({
       "name": name,
@@ -29,6 +30,7 @@ class DatabaseService{
       "uid": uid,
       "username" : username,
       "birthday" : birthday,
+      "role" : role,
     });
   }
 }

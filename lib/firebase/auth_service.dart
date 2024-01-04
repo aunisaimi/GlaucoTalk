@@ -1,38 +1,94 @@
 import 'package:apptalk/firebase/database_service.dart';
+import 'package:apptalk/pages/authentication/login.dart';
+import 'package:apptalk/pages/authentication/volunteer/login_volunteer.dart';
+import 'package:apptalk/pages/main_menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/material.dart';
 import 'package:apptalk/pages/authentication/register.dart';
 
 class AuthService extends ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  // final GoogleSignIn _googleSignIn = GoogleSignIn();
   //bool isEmailVerified = _auth.currentUser?.isEmailVerified ?? false;
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // getUserRole function
+  Future<String?> getUserRole() async {
+    final User? user = _auth.currentUser;
+
+    if(user != null) {
+      try{
+        // get the user's token claims, which may include the 'role' claims
+       DocumentSnapshot userDoc = await _firestore
+           .collection('users')
+           .doc(user.uid)
+           .get();
+
+       if(userDoc.exists){
+         Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+         return userData['role'] as String?;
+       }
+       else {
+         return null;
+       }
+      }
+      catch(e){
+        print('Error retrieving user role: $e');
+        return null;
+      }
+    }
+    return null;
+  }
 
   //Sign In
-  Future<User?> signInWithEmailandPassword(String email,
-      String password) async {
+  Future<User?> signInWithEmailandPassword(BuildContext context, String email, String password) async {
     try {
       // sign in
-      final UserCredential userCredential = await _auth
-          .signInWithEmailAndPassword(email:email , password:password);
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+          email:email ,
+          password:password
+      );
+      // After successful sign-in, retrieve the user role
+      String? userRole = await getUserRole();
+      handleLoginSuccess(context, userRole);
+
       return userCredential.user;
 
-      /*//add any document for the user in users collection if doesnt already
-      _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'uid': userCredential.user!.uid,
-        'email': email,
-
-      }, SetOptions(merge: true));
-
-      return userCredential; */
     }
     on FirebaseAuthException catch (e) {
       throw Exception(e.code);
+    }
+  }
+
+  void handleLoginSuccess(BuildContext context, String? userRole) async {
+
+    if (userRole == 'user'){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(onTap: (){}),)
+      );
+      // navigate to the login
+    }
+    else if (userRole == ' volunteer'){
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginVol(),)
+      );
+      // Navigate to the login
+    }
+    else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainMenu(),)
+      );
+      // Handle the case where the user does not have the role
+      //  show a generic dashboard or display an error message.
     }
   }
 
@@ -48,15 +104,13 @@ class AuthService extends ChangeNotifier{
 
   //Register
   Future <User?> registerUserWithEmailandPassword(String name, String email,
-      String password, String username, DateTime birthday) async {
+      String password, String username, DateTime birthday, String role) async {
     try {
 
       // Check if all required fields are provided
       if (name.isEmpty || email.isEmpty || password.isEmpty || username.isEmpty) {
         throw Exception('All fields are required');
       }
-
-
 
       final UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(
@@ -66,7 +120,7 @@ class AuthService extends ChangeNotifier{
       //user.uid;
 
       // call our database service to update the user data
-      await DatabaseService().updateUserData(name, email, password, username, birthday);
+      await DatabaseService().updateUserData(name, email, password, username, birthday, role);
 
       // After creating user, create a new document for the users in user collection
       _firestore.collection('users').doc(userCredential.user!.uid).set({
@@ -75,7 +129,7 @@ class AuthService extends ChangeNotifier{
         'name': name,
         'username' : username,
         'birthday' : birthday,
-
+        'role' : role,
       });
 
       return userCredential.user;
@@ -83,53 +137,6 @@ class AuthService extends ChangeNotifier{
       print("Error during registration: ${e.message}");
       return null;
     }
-  }
-
-
-  // Google sign in
-  Future<User?> signInWithGoogle() async {
-    FirebaseAuth auth = FirebaseAuth.instance;
-    try {
-      final GoogleSignIn googleSignIn = GoogleSignIn();
-
-      // begin interactive sign in process
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      // obtain auth details from request
-      final GoogleSignInAuthentication googleAuth =
-      await googleUser!.authentication;
-
-      // create a new credential for user
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // sign in with users credential
-      final UserCredential authResult =
-      await _auth.signInWithCredential(credential);
-      final User? user = authResult.user;
-
-      final userDoc = await _firestore.collection('users').doc(user!.uid).get();
-      if (!userDoc.exists) {
-        // create a new firestore documeent for google sign in user
-        await _firestore.collection('users').doc(user.uid).set({
-          'uid': user.uid,
-          'email': user.email,
-        });
-      }
-
-      print('User signed in with Google: ${user.displayName}');
-      return user;
-    }
-    catch (error) {
-      // Handle sign in failure
-      print('Google Sign-In Error: $error');
-      return null;
-    }
-
-
-
   }
   Future<void> signOut()async{
     return await FirebaseAuth.instance.signOut();

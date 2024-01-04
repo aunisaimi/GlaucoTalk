@@ -1,4 +1,3 @@
-import 'package:apptalk/pages/home_page.dart';
 import 'package:apptalk/pages/setting/help_center.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -37,13 +36,6 @@ class _FeedbackScreenState extends State<FeedbackPage> {
         'status' : 1,
       });
 
-      // inform the user that the profile has been updated
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(
-      //     content: Text('Feedback saved successfully'),
-      //   ),
-      // );
-
       print("Successfully saved feedback");
 
     } catch(e){
@@ -59,7 +51,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
       appBar: AppBar(
         backgroundColor: Colors.black54,
         title:  Text(
-            "Feedback",
+          "Feedback",
           style: GoogleFonts.poppins(
             textStyle: TextStyle(
                 color: myTextColor,
@@ -71,10 +63,10 @@ class _FeedbackScreenState extends State<FeedbackPage> {
         leading: IconButton(
           onPressed: (){
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const HelpCenter(),
-                ),
+              context,
+              MaterialPageRoute(
+                builder: (context) => const HelpCenter(),
+              ),
             );
           },
           icon: const Icon(
@@ -88,7 +80,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
           padding: const EdgeInsets.all(30.0),
           child: Column(
             children: [
-               Text(
+              Text(
                 "Rate Your Experience",
                 style: GoogleFonts.poppins(
                   textStyle: TextStyle(
@@ -97,9 +89,9 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                       fontWeight: FontWeight.w600),
                 ),
               ),
-               const SizedBox(height: 10,),
+              const SizedBox(height: 10,),
 
-               Text(
+              Text(
                 "Are you Satisfied with the Application?",
                 style: GoogleFonts.poppins(
                   textStyle: TextStyle(
@@ -122,21 +114,22 @@ class _FeedbackScreenState extends State<FeedbackPage> {
 
               const SizedBox(height: 20,),
 
-               Text(
+              Text(
                 "Tell us what can be Improved?",
-                  style: GoogleFonts.poppins(
-                    textStyle: TextStyle(
-                        color: myTextColor,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500),
-                  ),
+                style: GoogleFonts.poppins(
+                  textStyle: TextStyle(
+                      color: myTextColor,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500),
+                ),
               ),
 
               const SizedBox(height: 20,),
 
-               Padding(
+              Padding(
                 padding:  const EdgeInsets.symmetric(horizontal: 25.0),
                 child: TextField(
+                  controller: messageController,
                   decoration: InputDecoration(
                     enabledBorder: const OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
@@ -180,16 +173,16 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                         fontWeight: FontWeight.bold),
                   ),
                   onPressed: (){
-                   if(messageController.text != ""){
-                     saveFeedbackData();
-                     // inform the user that the feedback has been sent
-                     Navigator.push(
-                       context,
-                       MaterialPageRoute(
-                         builder: (context) => buildSuccessPage(),
-                      ),
-                     );
-                   }
+                    if(messageController.text.trim().isNotEmpty){
+                      saveFeedbackData();
+                      // inform the user that the feedback has been sent
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => buildSuccessPage(),
+                        ),
+                      );
+                    }
                   },
                 ),
               ),
@@ -245,7 +238,7 @@ class _FeedbackScreenState extends State<FeedbackPage> {
                 ),
               ),
               const SizedBox(height: 10.0),
-               Text(
+              Text(
                 'We appreciate your feedback—it fuels our improvement process.',
                 style: TextStyle(
                   fontSize: 16.0,
@@ -271,10 +264,10 @@ class _FeedbackScreenState extends State<FeedbackPage> {
     );
   }
 
-  // void navigateBackToHelpCenter(){
-  //   Navigator.popUntil(
-  //       context,
-  //           ModalRoute.withName('HelpCenterScreen'),
-  //   );
-  // }
+// void navigateBackToHelpCenter(){
+//   Navigator.popUntil(
+//       context,
+//           ModalRoute.withName('HelpCenterScreen'),
+//   );
+// }
 }

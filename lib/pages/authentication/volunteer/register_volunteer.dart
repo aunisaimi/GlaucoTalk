@@ -1,21 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:apptalk/pages/authentication/volunteer/login_volunteer.dart';
 import 'package:apptalk/pages/home_page.dart';
-import 'package:apptalk/pages/authentication/login.dart';
 import 'package:apptalk/pages/main_menu.dart';
-import 'package:flutter/services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class RegisterPage extends StatefulWidget {
-  final Function()? onTap;
-
-  const RegisterPage({Key? key, required this.onTap}) : super(key: key);
+class RegisterVol extends StatefulWidget {
+  const RegisterVol({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<RegisterVol> createState() => _RegisterVolState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _RegisterVolState extends State<RegisterVol> {
   Color myCustomColor = const Color(0xFF00008B);
   Color myTextColor = const Color(0xF6F5F5FF);
 
@@ -31,10 +29,11 @@ class _RegisterPageState extends State<RegisterPage> {
   bool isPasswordVisible = false;
 
   // User register method
-  void userSignUp() async {
+  void volSignUp() async {
     // Show loading circle
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return const Center(
           child: CircularProgressIndicator(),
@@ -74,7 +73,7 @@ class _RegisterPageState extends State<RegisterPage> {
           'password': passwordController.text,
           'birthday': dateController.text,
           'username': usernameController.text,
-          'role': 'user'
+          'role': 'volunteer',
         });
 
         // Show success message or navigate to homepage
@@ -157,12 +156,14 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: myCustomColor,
+      backgroundColor: Colors.blueAccent[100],
       appBar: AppBar(
-        backgroundColor: myCustomColor,
+        backgroundColor: Colors.blueAccent[100],
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.home, color: Colors.white),
+          icon: const Icon(
+              Icons.home,
+              color: Colors.black),
           onPressed: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -181,14 +182,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 10),
                 Image.asset(
                   "assets/logo.png",
-                  width: 150,
-                  height: 150,
+                  width: 200,
+                  height: 200,
                 ),
 
-                Text(
+                const Text(
                   'Welcome to our app !',
                   style: TextStyle(
-                    color: myTextColor,
+                    color: Colors.black,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -216,12 +217,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       hintText: 'Name',
-                      fillColor: Colors.deepPurple,
+                      fillColor: myCustomColor,
                       filled: true,
                       hintStyle: const TextStyle(
                         color: Colors.white,
                       ),
-
                     ),
                   ),
                 ),
@@ -249,7 +249,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       hintText: 'Username',
-                      fillColor: Colors.deepPurple,
+                      fillColor: myCustomColor,
                       filled: true,
                       hintStyle: const TextStyle(
                         color: Colors.white,
@@ -281,7 +281,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       hintText: 'Email',
-                      fillColor: Colors.deepPurple,
+                      fillColor:myCustomColor,
                       filled: true,
                       hintStyle: const TextStyle(
                         color: Colors.white,
@@ -314,7 +314,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       hintText: 'Password',
-                      fillColor: Colors.deepPurple,
+                      fillColor: myCustomColor,
                       filled: true,
                       hintStyle: const TextStyle(
                         color: Colors.white,
@@ -346,7 +346,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.white,
                     ),
 
-                    obscureText: true,
+                    obscureText: !isPasswordVisible,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: const BorderSide(color: Colors.white),
@@ -359,7 +359,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       hintText: 'Confirm Password',
-                      fillColor: Colors.deepPurple,
+                      fillColor: myCustomColor,
                       filled: true,
                       hintStyle: const TextStyle(
                         color: Colors.white,
@@ -403,7 +403,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
 
                       hintText: 'Date of Birth',
-                      fillColor: Colors.deepPurple,
+                      fillColor: myCustomColor,
                       filled: true,
                       suffixIcon: const Icon(Icons.calendar_month_outlined, color: Colors.white),
                       hintStyle: const TextStyle(
@@ -424,48 +424,47 @@ class _RegisterPageState extends State<RegisterPage> {
                   width: 200,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.deepOrangeAccent,
+                      backgroundColor: Colors.indigo[800],
                       elevation: 10,
                       shape: const StadiumBorder(),
                     ),
 
-                    child: const Text(
+                    child: Text(
                       "REGISTER",
                       style: TextStyle(
-                        color: Color(0xF6F5F5FF),
+                        color: myTextColor,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     onPressed: () {
-                      userSignUp();
+                      volSignUp();
                     },
                   ),
                 ),
 
-                const SizedBox(height: 25),
+                const SizedBox(height: 20),
 
-                Row(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
                       'Already have an account?',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Colors.black,
                         fontWeight: FontWeight.normal,
-                        fontSize: 20,
+                        fontSize: 18,
                       ),
                     ),
-
-                    const SizedBox(width: 4),
-
                     TextButton(
-                      child: const Text(
+                      child: Text(
                         'Log In',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
-                          fontSize: 20,
+                        style: GoogleFonts.heebo(
+                          textStyle: TextStyle(
+                              color: Colors.deepOrangeAccent[400],
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
 
@@ -473,8 +472,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => LoginPage(
-                              onTap: () {},
+                            builder: (context) => const LoginVol(
                             ),
                           ),
                         );
@@ -509,3 +507,4 @@ String? validatePassword(String value) {
   }
   return null;
 }
+

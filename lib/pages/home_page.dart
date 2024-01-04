@@ -6,17 +6,18 @@ import 'package:apptalk/camera/camera.dart';
 import 'package:apptalk/firebase/auth_service.dart';
 import 'package:apptalk/pages/chat_page.dart';
 import 'package:apptalk/pages/authentication/login.dart';
+import 'package:apptalk/pages/profile_page.dart';
 import 'package:apptalk/pages/status/statuspage.dart';
 import 'package:apptalk/pages/search.dart';
 import 'package:apptalk/pages/setting/Notification%20page/noti_page.dart';
 import 'package:apptalk/pages/setting/account_center.dart';
 import 'package:apptalk/pages/setting/help_center.dart';
 import 'package:apptalk/pages/setting/theme/Apparance.dart';
+import 'package:apptalk/view/image_classification.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'package:apptalk/pages/profile_page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image/image.dart' as img;
@@ -27,7 +28,7 @@ import 'label_image/detect.dart';
 class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
-  final user = FirebaseAuth.instance.currentUser!;
+  final User? user = FirebaseAuth.instance.currentUser;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -100,14 +101,10 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => TakePictureScreen(
-              camera: camera,
-            onSavePicture: (XFile? image) async {
-              if (image != null) {
-                await savePictureToStorage(image);
-              }
-            }
-          ),
+        builder: (context) => TakePictureScreen(
+          camera: camera,
+          onSavePicture: savePictureToStorage,
+        ),
       ),
     );
   }
@@ -200,10 +197,10 @@ class _HomePageState extends State<HomePage> {
           iconTheme: const IconThemeData(color: Colors.white),
           backgroundColor: Colors.black54,
           title: Text(
-            'C H A T ',
-            style: GoogleFonts.poppins(
+            'C H A T',
+            style: GoogleFonts.aBeeZee(
               textStyle: const TextStyle(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.bold,
                 fontSize: 24,
                 color: Colors.yellow,
               ),
@@ -222,27 +219,27 @@ class _HomePageState extends State<HomePage> {
                 );
               },
               icon: const Icon(Icons.search,
-                size: 27,
+                size: 24,
                 color: Colors.white,
 
               ),
             ),
 
-            // IconButton(
-            //   onPressed: () {
-            //     navigateToTakePictureScreen(context, firstCamera!);
-            //   },
-            //   icon: const Icon(
-            //     Icons.camera_alt,
-            //     color: Colors.white,),
-            // ),
+            IconButton(
+              onPressed: () {
+                navigateToTakePictureScreen(context, firstCamera!);
+              },
+              icon: const Icon(
+                Icons.camera_alt,
+                color: Colors.white,),
+            ),
           ],
 
           bottom: const TabBar(
             labelColor: Colors.orange,
             labelStyle: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 20),// Color for the selected tab's text
+                fontSize: 14),// Color for the selected tab's text
             unselectedLabelColor: Colors.white,
             splashFactory: NoSplash.splashFactory,// Color for unselected tabs' text
             tabs: [
@@ -287,14 +284,14 @@ class _HomePageState extends State<HomePage> {
             const Column(
               children: [
                 Expanded(
-                  child: StatusPage(),
+                  child: StatusPage(userId: '',),
                 ),
               ],
             ),
             const Column(
               children: [
                 Expanded(
-                  child: DetectImagePage(),
+                  child: ImageClassificationPage(),
                 ),
               ],
             ),
@@ -360,7 +357,6 @@ class _HomePageState extends State<HomePage> {
                                 if(result){
                                   fetchUserData();
                                 }
-
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.deepOrange,
@@ -416,7 +412,6 @@ class _HomePageState extends State<HomePage> {
               ),
 
               const SizedBox(height: 8,),
-
 
               ListTile(
                 leading: const Icon(
@@ -530,21 +525,40 @@ class _HomePageState extends State<HomePage> {
                 ),
                 selected: _selectedIndex == 5,
                 onTap: () async {
-                  // Update the state of the app
-                  _onItemTapped(5);
-                  // Then close the drawer
-                  Navigator.pop(context);
+                  // Show confirmation dialog
+                  bool confirmLogout = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Sign Out'),
+                        content: const Text('Are you sure you want to sign out?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Sign Out'),
+                          ),
+                        ],
+                      );
+                    },
+                  ) ?? false; // The ?? false is used in case the dialog is dismissed without any button being pressed
 
-                  try{
-                    await FirebaseAuth.instance.signOut();
-                    // Navigate to login page after signed out
-                    Navigator.push(
+                  // Check confirmation and perform sign out
+                  if (confirmLogout) {
+                    try {
+                      await FirebaseAuth.instance.signOut();
+                      // Navigate to login page after signed out
+                      Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => LoginPage(onTap: () {})));
-                  }
-                  catch (e){
-                    print("Error signing out: ${e}");
+                        MaterialPageRoute(builder: (context) => LoginPage(onTap: () {})),
+                            (Route<dynamic> route) => false,
+                      );
+                    } catch (e) {
+                      print("Error signing out: $e");
+                    }
                   }
                 },
               ),
@@ -579,51 +593,30 @@ class _HomePageState extends State<HomePage> {
   //build individual user list items
   Widget _buildUserListItem(DocumentSnapshot document){
     Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-    bool isCurrentUser = _auth.currentUser!.email == data['name'];
 
-    if(_auth.currentUser!.email != data['name']){
-      return Dismissible(
-        key: Key(document.id), // Unique key for Dismissible
-        background: Container(
-          color: Colors.red,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsets.only(right: 20.0),
-          child: const Icon(
-              Icons.delete,
-              color: Colors.white),
+    // display all users except current user
+    if(_auth.currentUser!.email != data['email']){
+      return ListTile(
+        title: Text(
+          data['name'],
+          style: TextStyle(color: myTextColor, fontSize: 18),
         ),
-        direction: DismissDirection.endToStart,
-        onDismissed: (direction) {
-          // Add your logic to delete the item from Firestore
-          FirebaseFirestore.instance
-              .collection('users')
-              .doc(document.id)
-              .delete();
-        },
-        child: ListTile(
-          title: Text(
-            data['name'],
-            style: TextStyle(
-              color: isCurrentUser
-                  ? Colors.deepOrange : myTextColor,
-              fontSize: isCurrentUser ? 25.0 : 20.0,
+        onTap: (){
+          // pass the clicked user's UID to the chat page
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ChatPage(
+              receiverName: data['name'] ?? '',
+              receiverUserID: document.id?? '',
+              senderprofilePicUrl: data['profilePicUrl'] ?? '',
             ),
-          ),
-          onTap: (){
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ChatPage(
-                receiverName: data['name'] ?? '',
-                receiverUserID: data['uid'] ?? '',
-                senderprofilePicUrl: data['profilePicUrl'] ?? '',
-              )),
-            );
-          },
-        ),
+            ),
+          );
+        },
       );
-    } else {
+    } else{
+      // Return empty container
       return Container();
     }
   }
-
 }

@@ -82,6 +82,9 @@ class _ViewStoriesPageState extends State<ViewStoriesPage> {
               Map<String, dynamic> data
               = story.data() as Map<String, dynamic>;
 
+              // Modify here to include the user's name
+              String postedBy = data['username'] ?? 'Unknown User';
+
               return ListTile(
                 leading: data['mediaUrl'] != null
                     ? Image.network(data['mediaUrl'],
@@ -100,7 +103,8 @@ class _ViewStoriesPageState extends State<ViewStoriesPage> {
                     fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                    'Posted by ${data['userID'] ?? 'Unknown'}',
+                   // 'Posted by ${data['userID'] ?? 'Unknown'}',
+                    'Posted by ${data['username']}',
                   style: TextStyle(
                       color: myTextColor,
                       fontSize: 16),
